@@ -93,23 +93,37 @@ dd
 \begin{figure}[t]
     \centering
     \includegraphics[width=2in]{figures/robot.jpg}
-    \caption{Robot platform with onboard computation.}
-    \label{robot}
+    \caption{Robot platform with onboard computation.}￼
+    \label{fig:robot}
 \end{figure}
 
 \subsection{Robot platform}
-\label{robot_platform}
+\label{sec:robot_platform}
 Our robot platform [10] shown in figure~\ref{fig:robot} is based on a Parallax ‘Shield-Bot’ chassis [?], with a Jetson TX1 embedded computer [?] mounted on top for additional onboard computation as well as additional batteries mounted underneath to power it. 
 Finally the robot has a Kodak PixPro SP360 4K camera connected via USB to provide panoramic visual input.
 
+\begin{figure}[t]
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/360_240.jpg}
+        \caption{Unprocessed panoramic image}
+    \end{subfigure}
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/360_240_mask.png}
+        \caption{Sky-segmented panoramic image}
+    \end{subfigure}
+    \caption{Example panoramic images from our database}
+    \label{fig:database_images}
+\end{figure}
+
 \subsection{Image database}
-\label{image_database}
+\label{sec:image_database}
 Using a Kodak PixPro SP360 panoramic camera, we recorded 195 images of the ‘Library Square’ at the University of Sussex (figure?). 
-These were taken on a 1.2m grid, defined by square’s paving slabs. 
+These were taken on a \SI{1.2}{\metre} grid, defined by square’s paving slabs. 
 Alongside this reference grid, we also recorded videos from the same camera, mounted on the mobile robot described in the previous section, while we manually drove it along six routes of varying tortuosity across the square. 
 As well as these videos, taken from the robot’s point-of-view, we simultaneously recorded the position of the robot using a camera mounted on a tripod. 
 After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability [1] implementation provided by OpenCV **CITE** and synchronised these positions with the video frames captured by the robot. 
 \citet{Stone2014} showed that sky-segmented, binary images can be used for robust visual navigation and, while our robot does not have a suitable UV camera, by using the watershed segmentation algorithm~\citep{Beucher1979} with markers placed at the top and bottom of each image, we obtained automatically sky-segmented versions of all of the images in our dataset.
+Figure~\ref{fig:database_images} shows some example images from this database.
 
 \begin{figure*}[t]
     \centering
@@ -126,19 +140,19 @@ After synchronising these videos, we extracted the position of the robot over ti
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics{figures/vector_field_route5_PerfectMemoryConstrained_mask.eps}
         \caption{By only considering rotated views within 90° of the route, visual aliasing can be avoided}
-        \label{fig:vector_fields/route5_perfect_memory_constained_mask}
+        \label{fig:vector_fields/route5_perfect_memory_constrained_mask}
     \end{subfigure}
     
     \caption{Vector fields showing the directions an agent, trained on a route, would move at each point within 4m of the route using a Perfect Memory algorithm with the skyline extracted using the watershed algorithm. 
     Orange lines shows data from our camera-based tracking of the robot and blue shows the version simplified using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972}}
-    \label{vector_fields}
+    \label{fig:vector_fields}
 \end{figure*}
     
 \begin{figure*}[t]
     \centering
     \includegraphics{figures/route_benchmark.eps}
     \caption{Performance of different algorithms on each of the 6 routes. \todo{decide on consistent names for routes}}
-    \label{route_benchmark}
+    \label{fig:route_benchmark}
 \end{figure*}
 
 \section{Results}
@@ -146,16 +160,16 @@ After synchronising these videos, we extracted the position of the robot over ti
 We trained both the InfoMax and Perfect Memory on each of the six routes in our dataset and calculated the familiarity against the images at each grid point within \SI{4}{\metre} of the trained route. 
 To find the direction a robot would move when placed at each location, we rotated the grid image taken at that point through \SI{\pm 180}{\degree} and found the most familiar direction. 
 Figure~\ref{fig:vector_fields} shows some example vector fields resulting from plotting this direction at each location. 
-While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields/route2_perfect_memory_mask} would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_field_route5_PerfectMemory_mask}, errors occur.
+While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields/route2_perfect_memory_mask} would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_mask}, errors occur.
 \todo{figure showing of best match, RIDF, difference image etc}
 However, if we were recapitulating the route using a real robot, these false-positive matches could be eliminated and computation could be saved by not scanning the full \SI{\pm 180}{\degree}. 
-If we simulate this using our grid of images by only considering matches within \SI{\pm 90}{\degree} of the heading of the nearest section of the route (calculated based on the simplified version), as shown in Figure~\ref{fig:vector_field_route5_PerfectMemoryConstrained_mask}, the performance is much improved.
+If we simulate this using our grid of images by only considering matches within \SI{\pm 90}{\degree} of the heading of the nearest section of the route (calculated based on the simplified version), as shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_constrained_mask}, the performance is much improved.
 
 \begin{figure}[t]
     \centering
     \includegraphics{figures/jetson_test_performance.eps}
     \caption{Performance of visual navigation algorithms running on Jetson TX1. Reported times are measured using .}
-    \label{jetson_test_performance}
+    \label{fig:jetson_test_performance}
 \end{figure}
 
 \subsection{Performance of algorithm}
@@ -166,12 +180,12 @@ However, in order to deploy these algorithms on a real robot with constrained on
     \centering
     \includegraphics{figures/robot_paths.eps}
     \caption{Reconstructed paths of autonomous robot during training and testing using each algorithm.}
-    \label{robot_paths}
+    \label{fig:robot_paths}
 \end{figure}
 
 
 \subsection{Autonomous robot}
-Using the same implementations of InfoMax and the Perfect Memory from our Brains-on-Board Robotics **ref** library, we built a simple application which can recapitulate learned routes on the robot described in section~\ref{robot_platform} by running the following simple algorithm every \SI{500}{\milli\second} (based on the performance for 1000 images established in the previous section):
+Using the same implementations of InfoMax and the Perfect Memory from our Brains-on-Board Robotics **ref** library, we built a simple application which can recapitulate learned routes on the robot described in section~\ref{sec:robot_platform} by running the following simple algorithm every \SI{500}{\milli\second} (based on the performance for 1000 images established in the previous section):
 \begin{enumerate}
     \item Capture and unwrap a panoramic image.
     \item Perform one of the image processing steps described in section~\ref{sec:image_database}.
