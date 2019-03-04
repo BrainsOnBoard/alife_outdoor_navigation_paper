@@ -9,8 +9,9 @@ from route import load_route
 import plot_utils
 
 # Check we only get a single argument
-assert len(argv) == 2
+assert len(argv) >= 2
 
+route_path = argv[2] if (len(argv) >= 3) else "routes"
 # Read output
 output_data = np.loadtxt(argv[1], delimiter=",", skiprows=1, usecols=(0, 1, 2),
                          converters={0: lambda s: float(s[:-3]),
@@ -27,13 +28,13 @@ output_title = path.splitext(output_filename)[0]
 _, route_name, memory, image_input = output_title.split("_")
 
 # Load route
-coords, remaining_coords = load_route(path.join("routes", route_name), image_input)
+coords, remaining_coords = load_route(path.join(route_path, route_name), image_input)
 
 # Configure palette
 colours = sns.color_palette(n_colors=3)
 
 # Create single-column figure
-fig, axis = plt.subplots(figsize=(plot_utils.column_width, 5.0))
+fig, axis = plt.subplots(figsize=(plot_utils.double_column_width * 0.3, 3.0))
 axis.set_aspect("equal", "box")
 
 # Set axis range to match that of grid
@@ -69,5 +70,5 @@ axis.arrow(first_x - dir_x, first_y - dir_y, dir_x, dir_y,
 
 fig.tight_layout(pad=0)
 if not plot_utils.presentation:
-    fig.savefig("vector_field_" + route_name + "_" + memory + "_" + image_input + ".png")
+    fig.savefig("../figures/vector_field_" + route_name + "_" + memory + "_" + image_input + ".eps")
 plt.show()
