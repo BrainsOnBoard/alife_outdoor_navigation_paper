@@ -28,6 +28,8 @@ axis.axvline(15, linestyle="--", color="gray")
 
 axis.set_xlabel("Rotation [degrees]")
 axis.set_ylabel("Image difference")
+axis.set_xticks([-180, -90, 0, 90, 180])
+plot_utils.remove_axis_junk(axis)
 
 fig.tight_layout(pad=0)
 

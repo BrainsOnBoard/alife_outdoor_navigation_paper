@@ -54,11 +54,10 @@
 
 
 \title{Critical Exponent of Species-Size Distribution in Evolution}
-\author{Chris Adami$^{1}$, Ryoichi Seki$^{1,2}$ \and Robel Yirdaw$^2$ \\
+\author{James C. Knight$^{1}$ \and Andrew Philippides$^{1}$ \\
 \mbox{}\\
-$^1$California Institute of Technology, Pasadena, CA 91125 \\
-$^2$California State University, Northridge, CA 91330 \\
-adami@caltech.edu} % email of corresponding author
+$^1$Centre for Computational Neuroscience and Robotics, University of Sussex, Brighton, UK \\
+J.C.Knight@sussex.ac.uk} % email of corresponding author
 
 % For several authors from the same institution use the same number to
 % refer to one address.
@@ -99,8 +98,9 @@ dd
 
 \subsection{Robot platform}
 \label{sec:robot_platform}
-Our robot platform [10] shown in figure~\ref{fig:robot} is based on a Parallax ‘Shield-Bot’ chassis [?], with a Jetson TX1 embedded computer [?] mounted on top for additional onboard computation as well as additional batteries mounted underneath to power it. 
-Finally the robot has a Kodak PixPro SP360 4K camera connected via USB to provide panoramic visual input.
+In this work we use the robot platform developed by \citet{Domcsek2018} shown in figure~\ref{fig:robot}.
+This robot is based on a Parallax `Shield-Bot' chassis \todo{reference}, with a Jetson TX1 embedded computer \todo{reference} mounted on top for additional onboard computation and additional batteries mounted underneath. 
+The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera, mounted on top of the robot connected which provides panoramic visual input.
 
 \begin{figure}[t]
     \begin{subfigure}[b]{\columnwidth}
@@ -152,20 +152,35 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/alias_ridf.eps}
         \caption{Rotational Image Difference function}
+        \label{fig:aliasing/ridf}
     \end{subfigure}
     
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/image_diff_bad.png}
         \caption{Difference image with visual aliased route image}
+        \label{fig:aliasing/image_diff_bad}
     \end{subfigure}
     
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/image_diff_good.png}
         \caption{Difference image with correct route image}
+        \label{fig:aliasing/image_diff_good}
     \end{subfigure}
     \caption{Analysis of aliasing shown in figure~\ref{fig:vector_fields/route5_perfect_memory_mask}.
-    Using grid image taken at (\SI{600}{\metre}, \SI{720}{\metre}.) }
+    Using grid image taken at (\SI{600}{\metre}, \SI{720}{\metre}).
+    All images were preprocessed using watershed segmentation algorithm.}
+    \label{fig:aliasing}
 \end{figure}
+
+\section{Results}
+\subsection{Image database}
+We trained both the InfoMax and Perfect Memory algorithms on the images taken along the six routes in our dataset and then used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
+Heading direction were calculated by rotating the grid image taken at a point through \SI{\pm 180}{\degree} and finding the angle at which the algorithm reported the highest familiarity.
+Figure~\ref{fig:vector_fields} shows some example vector fields obtained by plotting this direction at each of the chosen grid locations when using the Perfect Memory algorithm with the watershed segmentation-based preprocessing discussed in section~\ref{sec:image_database}. 
+While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields/route2_perfect_memory_mask} would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_mask}, errors occur.
+Figure~\ref{fig:aliasing/ridf} shows a Rotational Image Difference Function~(RIDF) taken at one of the problematic locations on this route \todo{mark grid and add arrows showing aliases} (\SI{600}{\metre}, \SI{720}{\metre}) and it is clear that, as well as the local minima representing the correct heading at \SI{15}{\degree}, there is an additional, slightly lower local minima at \SI{153}{\degree} which is overriding the correct choice.
+Figures~\ref{fig:aliasing/image_diff_bad}~and~\ref{fig:aliasing/image_diff_good} show the per-pixel differences between the two route images and the rotated versions of the grid image which correspond with these minima and this makes the cause of the problem become clear.
+Although the \emph{shapes} of the skylines in figure~\ref{fig:aliasing/image_diff_good} are clearly more similar than those in figure~\ref{fig:aliasing/image_diff_bad}, there is a vertical offset -- probably caused by camera shake -- which introduces a large difference between the two images.
 
 \begin{figure*}[t]
     \centering
@@ -174,15 +189,12 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \label{fig:route_benchmark}
 \end{figure*}
 
-\section{Results}
-\subsection{Image database}
-We trained both the InfoMax and Perfect Memory on each of the six routes in our dataset and calculated the familiarity against the images at each grid point within \SI{4}{\metre} of the trained route. 
-To find the direction a robot would move when placed at each location, we rotated the grid image taken at that point through \SI{\pm 180}{\degree} and found the most familiar direction. 
-Figure~\ref{fig:vector_fields} shows some example vector fields resulting from plotting this direction at each location. 
-While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields/route2_perfect_memory_mask} would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_mask}, errors occur.
-\todo{figure showing of best match, RIDF, difference image etc}
-However, if we were recapitulating the route using a real robot, these false-positive matches could be eliminated and computation could be saved by not scanning the full \SI{\pm 180}{\degree}. 
-If we simulate this using our grid of images by only considering matches within \SI{\pm 90}{\degree} of the heading of the nearest section of the route (calculated based on the simplified version), as shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_constrained_mask}, the performance is much improved.
+However, if we were recapitulating the route using a real robot, these false-positive matches could be eliminated and computation saved by not scanning the full \SI{\pm 180}{\degree}. 
+We can simulate this using our existing database of images by first making a simplified version of each route using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972} and determining the direction of each of the resultant segments.
+Using these headings, we can then ignore matches that would involve heading more than \SI{\pm 90}{\degree} away from the direction of the nearest section of the route.
+Figure~\ref{fig:vector_fields/route5_perfect_memory_constrained_mask} shows that this step solves the aliasing problems in this particular case and figure~\ref{fig:route_benchmark} confirms that this is the case across all algorithms and routes.
+Furthermore, figure~\ref{fig:route_benchmark} also shows that, when using the Perfect Memory algorithm, sky-segmentation improves performance for almost all routes.
+This improvement is less clearcut when using the InfoMax algorithm but, 
 
 \begin{figure}[t]
     \centering
@@ -204,12 +216,12 @@ However, in order to deploy these algorithms on a real robot with constrained on
 
 
 \subsection{Autonomous robot}
-Using the same implementations of InfoMax and the Perfect Memory from our Brains-on-Board Robotics **ref** library, we built a simple application which can recapitulate learned routes on the robot described in section~\ref{sec:robot_platform} by running the following simple algorithm every \SI{500}{\milli\second} (based on the performance for 1000 images established in the previous section):
+Using the implementations of InfoMax and the Perfect Memory algorithms from our Brains-on-Board Robotics **ref** library, we built a simple application which can recapitulate learned routes on the robot described in section~\ref{sec:robot_platform} by running the following simple algorithm every \SI{500}{\milli\second} (based on the performance for 1000 images established in the previous section):
 \begin{enumerate}
     \item Capture and unwrap a panoramic image.
     \item Perform one of the image processing steps described in section~\ref{sec:image_database}.
     \item Using either the InfoMax or Perfect Memory algorithm, calculate the familiarity with the processed image ‘in-silico’ when rotated through \SI{\pm 90}{\degree}°.
-    \item Find the orientation with the highest familiarity - if it is within \SI{4}{\degree} (**CHECK**) drive forwards for the next \SI{500}{\milli\second}, otherwise turn in the correct direction to align with the image.
+    \item Find the orientation with the highest familiarity and, if it is within \SI{4}{\degree} \todo{CHECK}, start driving forwards, otherwise start turning in the correct direction to align with the image.
 \end{enumerate}
 We tested our robot in an outdoor environment 
 

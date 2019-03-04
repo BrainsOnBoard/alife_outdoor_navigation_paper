@@ -13,7 +13,7 @@ def remove_axis_junk(axis):
     sns.despine(ax=axis)
 
 
-def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2):
+def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=0.2):
     columns = list(zip(*data))
     device = np.asarray(columns[0],  dtype=str)
     group = np.asarray(columns[1],  dtype=str)
@@ -81,7 +81,7 @@ def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2):
                 ncol=num_legend_col, loc="lower center")
 
     # Set tight layout and save
-    fig.tight_layout(pad=0, rect=[0.0, 0.2, 1.0, 1.0])
+    fig.tight_layout(pad=0, rect=[0.0, legend_pad, 1.0, 1.0])
 
 
 # Set the plotting style

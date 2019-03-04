@@ -38,7 +38,7 @@ axis.set_xlabel("Number of stored snapshots")
 axis.set_ylabel("Time [ms]")
 axis.set_yscale("log", nonposy="clip")
 
-plot_utils.plot_grouped_bars(jetson_test_data, 4, fig, axis)
+plot_utils.plot_grouped_bars(jetson_test_data, 4, fig, axis, legend_pad=0.15)
 
 if not plot_utils.presentation:
     fig.savefig("../figures/jetson_test_performance.eps")
