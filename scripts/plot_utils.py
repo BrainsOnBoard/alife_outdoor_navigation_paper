@@ -17,13 +17,9 @@ def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=
     columns = list(zip(*data))
     device = np.asarray(columns[0],  dtype=str)
     group = np.asarray(columns[1],  dtype=str)
-    time_col_start = 1 if group_size is None else 2
+    times = np.asarray(columns[2], dtype=float)
 
-    # Read times into numpy arrays
-    num_time_columns = len(columns) - time_col_start
-    times = np.empty((num_time_columns, len(device)), dtype=float)
-    for i, col in enumerate(columns[time_col_start:]):
-        times[i,:] = col
+    errors = None if len(columns) < 4 else columns[3]
 
     # Correctly place bars
     bar_width = 0.8
@@ -46,24 +42,18 @@ def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=
         start = end + group_pad
 
     assert len(bar_x) == len(device)
-    offset = np.zeros(len(bar_x))
 
-
+    # Build colour vector - colouring bars based on group
     pal = sns.color_palette()
     legend_actors = []
-    for i in range(times.shape[0]):
-        # Build colour vector - colouring bars based on group and stack height
-        colour = None
-        num_bars = len(device)
-        colour = [pal[(i * group_size) + j] for j in range(group_size)] * num_bars
+    colour = None
+    num_bars = len(device)
+    colour = [pal[j] for j in range(group_size)] * num_bars
 
-        bars = axis.bar(bar_x, times[i,:], bar_width, offset, color=colour)
+    # Plot bars
+    bars = axis.bar(bar_x, times, bar_width, color=colour, yerr=errors)
 
-        if group_size is None:
-            legend_actors.append(bars[0])
-        else:
-            legend_actors.extend(b for b in bars[:group_size])
-        offset += times[i,:]
+    legend_actors.extend(b for b in bars[:group_size])
 
 
 
