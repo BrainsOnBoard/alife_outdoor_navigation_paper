@@ -121,23 +121,23 @@ Using a Kodak PixPro SP360 panoramic camera, we recorded 195 images of the ‘Li
 These were taken on a \SI{1.2}{\metre} grid, defined by square’s paving slabs. 
 Alongside this reference grid, we also recorded videos from the same camera, mounted on the mobile robot described in the previous section, while we manually drove it along six routes of varying tortuosity across the square. 
 As well as these videos, taken from the robot’s point-of-view, we simultaneously recorded the position of the robot using a camera mounted on a tripod. 
-After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability [1] implementation provided by OpenCV **CITE** and synchronised these positions with the video frames captured by the robot. 
+After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability~\citep{Lukezic2018} implementation provided by OpenCV **CITE** and synchronised these positions with the video frames captured by the robot. 
 \citet{Stone2014} showed that sky-segmented, binary images can be used for robust visual navigation and, while our robot does not have a suitable UV camera, by using the watershed segmentation algorithm~\citep{Beucher1979} with markers placed at the top and bottom of each image, we obtained automatically sky-segmented versions of all of the images in our dataset.
 Figure~\ref{fig:database_images} shows some example images from this database.
 
 \begin{figure*}[t]
     \centering
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics{figures/vector_field_route2_PerfectMemory_mask.eps}
         \caption{Simple route}
         \label{fig:vector_fields/route2_perfect_memory_mask}
     \end{subfigure}
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics{figures/vector_field_route5_PerfectMemory_mask.eps}
         \caption{Longer route where visual aliasing occurs in the middle section}
         \label{fig:vector_fields/route5_perfect_memory_mask}
     \end{subfigure}
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics{figures/vector_field_route5_PerfectMemoryConstrained_mask.eps}
         \caption{By only considering rotated views within 90° of the route, visual aliasing can be avoided}
         \label{fig:vector_fields/route5_perfect_memory_constrained_mask}
@@ -147,7 +147,26 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     Orange lines shows data from our camera-based tracking of the robot and blue shows the version simplified using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972}}
     \label{fig:vector_fields}
 \end{figure*}
+
+\begin{figure}[t]
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/alias_ridf.eps}
+        \caption{Rotational Image Difference function}
+    \end{subfigure}
     
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/image_diff_bad.png}
+        \caption{Difference image with visual aliased route image}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/image_diff_good.png}
+        \caption{Difference image with correct route image}
+    \end{subfigure}
+    \caption{Analysis of aliasing shown in figure~\ref{fig:vector_fields/route5_perfect_memory_mask}.
+    Using grid image taken at (\SI{600}{\metre}, \SI{720}{\metre}.) }
+\end{figure}
+
 \begin{figure*}[t]
     \centering
     \includegraphics{figures/route_benchmark.eps}
