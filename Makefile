@@ -9,12 +9,12 @@ BIBFLAGS=
 COMMIT?=5d8b8cdd51fd05a4699d24d5ff4afd7ed983eb95
 texdoc=alife
 
-.PHONY: clean bib count all
+.PHONY: clean bib count all always_run
 
 # Make all items
 all : $(texdoc).pdf
 
-$(texdoc).pdf : $(texdoc).tex
+$(texdoc).pdf : $(texdoc).tex always_run 
 	$(TEX) $(TEXFLAGS) $(texdoc)
 
 # Generate reference requirements
