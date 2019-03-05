@@ -1,12 +1,16 @@
 \documentclass[letterpaper]{article}
 
-\usepackage{natbib,alifeconf,xcolor,subcaption}  %% The order is important
+\usepackage{hyperref,natbib,alifeconf,listings,subcaption,textcomp,xcolor}  %% The order is important - natbib must be before alifeconf
 
 % Automatic formatting of SI units
 \usepackage[binary-units]{siunitx}
 
+% Configure listing
+\lstset{language=C++,showstringspaces=false,upquote=true,identifierstyle=\ttfamily\color{black}}
+
 % Visible TODO notes
 \newcommand{\todo}[1]{\textbf{\textsc{\textcolor{red}{(TODO: #1)}}}}
+
 % *****************
 %  Requirements:
 % *****************
@@ -77,7 +81,7 @@ J.C.Knight@sussex.ac.uk} % email of corresponding author
 \begin{abstract}
 % Abstract length should not exceed 250 words
 Inspired by the visual scanning behaviour seen in ants, models of visually-guided navigation that operate by searching for previously experienced views of the world, have been shown to be capable of facilitating robust navigation.
-However, these algorithms have only been previously tested using simulated agents in virtual environments, not on natural scenes or physical robotic agents.\todo{Andy is this true?}
+However, these algorithms have only been previously tested using simulated agents in virtual environments, not on natural scenes or physical robotic agents.\todo{Andy is this true? living machines paper does look at natural scenes but not really navigation. }
 In this work we explore the performance of these algorithms both offline, using a dataset consisting of images and video routes captured in an outdoor environment, and running onboard an autonomous robot.
 The results from our experiments show that these insect-inspired algorithms are capable of extracting reliable direction information even when scenes contain few local landmarks and high-levels of noise.
 Furthermore, when running these algorithms on our autonomous robot, we demonstrate that routes can be successfully recapitulated precisely -- our robot remains an average of only \SI{10}{\centi\metre} away from the trained path.
@@ -88,9 +92,10 @@ dd
 
 \section{Methods}
 \subsection{Familiarity-driven navigation algorithms}
+\label{sec:navigation_algorithms}
 \begin{itemize}
-    \item InfoMax
     \item PerfectMemory
+    \item InfoMax
 \end{itemize}
 
 \begin{figure}[t]
@@ -125,7 +130,8 @@ Using a Kodak PixPro SP360 panoramic camera, we recorded 195 images of the ‘Li
 These were taken on a \SI{1.2}{\metre} grid, defined by square’s paving slabs. 
 Alongside this reference grid, we also recorded videos from the same camera, mounted on the mobile robot described in the previous section, while we manually drove it along six routes of varying tortuosity across the square. 
 As well as these videos, taken from the robot’s point-of-view, we simultaneously recorded the position of the robot using a camera mounted on a tripod. 
-After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability~\citep{Lukezic2018} implementation provided by OpenCV **CITE** and synchronised these positions with the video frames captured by the robot. 
+After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability~\citep{Lukezic2018} implementation provided by OpenCV **CITE**.
+Finally, we again used OpenCV to apply a perspective transform to the positions extracted by the tracker and synchronised these final positions with the video frames captured by the robot. 
 \citet{Stone2014} showed that sky-segmented, binary images can be used for robust visual navigation and, while our robot does not have a suitable UV camera, by using the watershed segmentation algorithm~\citep{Beucher1979} with markers placed at the top and bottom of each image, we obtained automatically sky-segmented versions of all of the images in our dataset.
 Figure~\ref{fig:database_images} shows some example images from this database.
 
@@ -198,18 +204,27 @@ We can simulate this using our existing database of images by first making a sim
 Using these headings, we can then ignore matches that would involve heading more than \SI{\pm 90}{\degree} away from the direction of the nearest section of the route.
 Figure~\ref{fig:vector_fields/route5_perfect_memory_constrained_mask} shows that this step solves the aliasing problems in this particular case and figure~\ref{fig:route_benchmark} confirms that this is the case across all algorithms and routes.
 Furthermore, figure~\ref{fig:route_benchmark} also shows that, when using the Perfect Memory algorithm, sky-segmentation improves performance for almost all routes.
-This improvement is less clearcut when using the InfoMax algorithm but, 
+This improvement is less significant when using the InfoMax algorithm but, 
 
 \begin{figure}[t]
     \centering
     \includegraphics{figures/jetson_test_performance.eps}
-    \caption{Performance of visual navigation algorithms running on Jetson TX1. Reported times are measured using .}
+    \caption{Performance of visual navigation algorithms running on Jetson TX1. 
+    Reported times are measured using \lstinline{std::chrono::high_resolution_clock} and average is taken over \num{100} images.}
     \label{fig:jetson_test_performance}
 \end{figure}
 
 \subsection{Performance of algorithm}
-In the previous section, we showed that these simple insect-inspired algorithms are capable of robustly extracting heading direction through dynamic natural scenes. 
+In the previous section, we showed that these simple insect-inspired algorithms are capable of robustly extracting heading direction in outdoor scenes. 
 However, in order to deploy these algorithms on a real robot with constrained on board processing, their performance is important. 
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=2in]{figures/robot_environment.jpg}
+    \caption{Environment used for robot testing.}
+    \label{fig:robot_environment}
+\end{figure}
 
 \begin{figure}[t]
     \centering
@@ -227,7 +242,11 @@ Using the implementations of InfoMax and the Perfect Memory algorithms from our 
     \item Using either the InfoMax or Perfect Memory algorithm, calculate the familiarity with the processed image ‘in-silico’ when rotated through \SI{\pm 90}{\degree}°.
     \item Find the orientation with the highest familiarity and, if it is within \SI{4}{\degree} \todo{CHECK}, start driving forwards, otherwise start turning in the correct direction to align with the image.
 \end{enumerate}
-We tested our robot in an outdoor environment 
+In order to compare the performance of the navigation algorithms and image processing steps described in sections~\ref{sec:navigation_algorithms}~and~\ref{sec:image_database} when using this algorithm, we first manually drove the robot along a sinuous route through the wooded area shown in figure~\ref{fig:robot_environment}, recording training images every \SI{100}{\milli\second}\todo{check} (resulting in a dataset of \num{455} images).
+We then trained each of the navigation algorithms on this dataset and allowed the robot to recapitulate the path using the procedure described above.
+Throughout this training and testing process, we used the same method described in section~\ref{sec:image_database} to track the robot resulting in the data shown in figure~\ref{fig:robot_paths}.
+The robot was able to successfully recapitulate the training path using each of the navigation and image processing algorithms with little difference in performance immediately apparent in figure~\ref{fig:robot_paths}.
+We confirmed this by calculating the shortest distance to the training path at each location along each recapitulated path and found that, in this environment, there was no significant difference between the performance of the different algorithms and overall the mean of the distance between the training and recapitulated paths was \SI{9}{\centi\metre}, with a standard deviation of \SI{8}{\centi\metre}.
 
 \section{Discussion}
 \begin{itemize}
@@ -237,9 +256,11 @@ We tested our robot in an outdoor environment
 Typically, visual SLAM implementations extract features such as SURF or SIFT which require several hundreds of milliseconds to extract per frame~\citep{Bay2006}. 
 This makes such implementations impractical to use in real-time, especially on constrained mobile platforms. 
 However, more recent SLAM implementations such as FLaME~\citep{Greene2017} have been shown to run on autonomous quadrotors in only around \SI{10}{\milli\second} per frame. 
-While this is significantly faster than our current InfoMax implementation, \citet{Greene2017} were using a much more powerful Intel CPU on their quadrotor (\citet{Biddulph2018} measure it as being $5\times$ faster). 
-Furthermore, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half the number of pixels used here. 
-Because the time taken to calculate the matrix-vector product required for equation**REFERENCE** scales quadratically, using input images with half the number of pixels would quarter the time taken to evaluate equation**REFERENCE**.
+While this is significantly faster than our current InfoMax implementation, \citet{Greene2017} were using a much more powerful Intel CPU on their quadrotor (\citet{Biddulph2018} measure these devices as being $5\times$ faster than a Jetson TX1). 
+For consistency we used $120 \times 25$ pixel images for all of the work presented in this paper but, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half this number of pixels.
+Because the time taken to calculate the matrix-vector product required for equation~\todo{reference} scales quadratically, using input images with half the number of pixels would quarter the time taken to evaluate equation~\todo{reference}.
+Furthermore, while our InfoMax implementation uses OpenMP~\todo{citation} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1.
+Initial experiments using the cuBLAS~\todo{citation} GPU-accelerated linear algebra library suggest that InfoMax inference could be performed in around \SI{100}{\milli\second} for $120 \times 25$ pixel images.
 
 \section{Conclusions}
 ss
