@@ -108,8 +108,8 @@ dd
 \subsection{Robot platform}
 \label{sec:robot_platform}
 In this work we use the robot platform developed by \citet{Domcsek2018} shown in figure~\ref{fig:robot}.
-This robot is based on a Parallax `Shield-Bot' chassis \todo{reference}, with a Jetson TX1 embedded computer \todo{reference} mounted on top for additional onboard computation and additional batteries mounted underneath. 
-The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera, mounted on top of the robot connected which provides panoramic visual input.
+This robot is based on a Parallax `Shield-Bot' chassis~\citep{ParallaxInc}, with a Jetson TX1 embedded computer~\citep{NVIDIACorporation2016} mounted on top for additional onboard computation and additional batteries mounted underneath. 
+The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera~\citep{JKImagingLtd}, mounted on top of the robot connected which provides panoramic visual input.
 
 \begin{figure}[t]
     \begin{subfigure}[b]{\columnwidth}
@@ -126,11 +126,11 @@ The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera, mounted o
 
 \subsection{Image database}
 \label{sec:image_database}
-Using a Kodak PixPro SP360 panoramic camera, we recorded 195 images of the ‘Library Square’ at the University of Sussex (figure?). 
+Using a Kodak PixPro SP360 4K panoramic camera~\citep{JKImagingLtd}, we recorded 195 images of the ‘Library Square’ at the University of Sussex (figure?). 
 These were taken on a \SI{1.2}{\metre} grid, defined by square’s paving slabs. 
 Alongside this reference grid, we also recorded videos from the same camera, mounted on the mobile robot described in the previous section, while we manually drove it along six routes of varying tortuosity across the square. 
 As well as these videos, taken from the robot’s point-of-view, we simultaneously recorded the position of the robot using a camera mounted on a tripod. 
-After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability~\citep{Lukezic2018} implementation provided by OpenCV **CITE**.
+After synchronising these videos, we extracted the position of the robot over time using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability~\citep{Lukezic2018} implementation provided by OpenCV~\citep{OpenCV}.
 Finally, we again used OpenCV to apply a perspective transform to the positions extracted by the tracker and synchronised these final positions with the video frames captured by the robot. 
 \citet{Stone2014} showed that sky-segmented, binary images can be used for robust visual navigation and, while our robot does not have a suitable UV camera, by using the watershed segmentation algorithm~\citep{Beucher1979} with markers placed at the top and bottom of each image, we obtained automatically sky-segmented versions of all of the images in our dataset.
 Figure~\ref{fig:database_images} shows some example images from this database.
@@ -260,7 +260,7 @@ While this is significantly faster than our current InfoMax implementation, \cit
 For consistency we used $120 \times 25$ pixel images for all of the work presented in this paper but, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half this number of pixels.
 Because the time taken to calculate the matrix-vector product required for equation~\todo{reference} scales quadratically, using input images with half the number of pixels would quarter the time taken to evaluate equation~\todo{reference}.
 Furthermore, while our InfoMax implementation uses OpenMP~\todo{citation} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1.
-Initial experiments using the cuBLAS~\todo{citation} GPU-accelerated linear algebra library suggest that InfoMax inference could be performed in around \SI{100}{\milli\second} for $120 \times 25$ pixel images.
+Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that InfoMax inference could be performed in around \SI{100}{\milli\second} for $120 \times 25$ pixel images.
 
 \section{Conclusions}
 ss
