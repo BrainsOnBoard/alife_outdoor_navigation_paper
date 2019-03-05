@@ -99,6 +99,8 @@ distances = [calc_distance_apart(training_tree, testing_raw),
              calc_distance_apart(training_tree, testing_binary),
              calc_distance_apart(training_tree, testing_infomax),
              calc_distance_apart(training_tree, testing_infomax_binary)]
+
+print("Mean error: %f" % np.average(np.hstack(distances)))
 error_fig, error_axis = plt.subplots(figsize=(plot_utils.column_width, 4.0),frameon=False)
 error_axis.boxplot(distances)
 error_axis.set_xticklabels(labels[1:], rotation=90, horizontalalignment="right")
