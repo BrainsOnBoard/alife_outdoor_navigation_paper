@@ -55,9 +55,6 @@ def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=
 
     legend_actors.extend(b for b in bars[:group_size])
 
-
-
-
     # Remove vertical grid
     axis.xaxis.grid(False)
 

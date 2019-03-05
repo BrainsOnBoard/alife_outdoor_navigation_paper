@@ -10,8 +10,8 @@ from scipy.stats import iqr
 
 import plot_utils
 
-#route_data = defaultdict(dict)
-route_data = []
+# Loop through output files from benchmark
+data = None
 for r in sorted(glob("benchmark_results/output_*.csv")):
     # Split result path into directory and file title
     output_dir, output_filename = path.split(r)
@@ -19,7 +19,6 @@ for r in sorted(glob("benchmark_results/output_*.csv")):
 
     # Split result file title into pre-defined components
     _, route_name, memory, image_input = output_title.split("_")
-
 
     # Skip image inputs we're not discussing
     if image_input == "horizon" or image_input == "skymask":
@@ -30,17 +29,36 @@ for r in sorted(glob("benchmark_results/output_*.csv")):
                          converters={3: lambda s: float(s[:-3])},
                          dtype=np.float)
 
-    errors = np.abs(errors)
-    # C
-    variant = "%s\n%s" % (memory, image_input)
-    route_data.append((route_name, variant, np.median(errors), np.std(errors)))
+    # Build compound numpy array from this
+    frame = np.empty(errors.shape, dtype={"names": ["route_name", "variant", "error"],
+                                          "formats": ["U64", "U64", np.float]})
+    frame["route_name"][:] = route_name
+    frame["variant"][:] = "%s\n%s" % (memory, image_input)
+    frame["error"][:] = np.abs(errors)
+
+    # If there's existing data stack on top
+    if data is None:
+        data = frame
+    else:
+        data = np.hstack((data, frame))
 
 
 fig, axis = plt.subplots(figsize=(plot_utils.double_column_width, 3.0),
                          frameon=False)
-axis.set_ylabel("RMSE [degrees]")
+axis.set_ylabel("Absolute angular error\n[degrees]")
 
-plot_utils.plot_grouped_bars(route_data, 8, fig, axis, num_legend_col=4, legend_pad=0.3)
+sns.boxplot(x=data["route_name"], y=data["error"], hue=data["variant"],
+            ax=axis, saturation=1.0, linewidth=1.0)
+
+# **HACK** remove unwanted AXIS legend
+axis.get_legend().remove()
+
+# Add in figure legend
+fig.legend(loc="lower center", ncol=4)
+
+# Set tight layout and save
+fig.tight_layout(pad=0, rect=[0.0, 0.3, 1.0, 1.0])
+
 if not plot_utils.presentation:
     fig.savefig("../figures/route_benchmark.eps")
 plt.show()
