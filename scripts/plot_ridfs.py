@@ -53,7 +53,7 @@ def plot_ridf(ridf_csv_filename, ridf2_csv_filename=None, ridf2_infomax=False):
 alias_ridf_fig, alias_ridf_axis, _ = plot_ridf("aliasing_data.csv")
 alias_ridf_axis.axvline(153, linestyle="--", color="gray")
 alias_ridf_axis.axvline(15, linestyle="--", color="gray")
-alias_ridf_fig.tight_layout(pad=0)
+alias_ridf_fig.tight_layout(pad=0, rect=[0.0, 0.175, 1.0, 1.0])
 
 # Plot good RIDF and RFF
 good_ridf_fig, _, good_ridf_actors = plot_ridf("good_ridf_data.csv", "good_rff_data.csv", True)
