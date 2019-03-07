@@ -68,7 +68,7 @@ When trying to repeat the route, the agent derives a direction of movement at a 
 Each rotated version of the current view is applied as an input to the network which outputs an estimate of its familiarity.
 The agent then moves in the direction corresponding to the view most similar to those encountered during learning. 
 
-Algorithms of this sort have been used to successfully learn routes through simulations of the habitats of solitary foraging ants, using a variety of neural networks as the route encoding, ranging from restricted Boltzmann machines~\citep{Baddeley2011models} to a spiking model of part of an ant’s brain known as the mushroom body~\citep{Ardin2016}).
+Algorithms of this sort have been used to successfully learn routes through simulations of the habitats of solitary foraging ants, using a variety of neural networks as the route encoding, ranging from restricted Boltzmann machines~\citep{Baddeley2011models} to a spiking model of part of an ant’s brain known as the mushroom body~\citep{Ardin2016}.
 The paths of these simulated agents have then been shown to demonstrate many of the characteristics of the paths of ants~\citep{Wystrach2013}. 
 In particular, \citet{Baddeley2012} showed that a single layer network trained with an Infomax learning rule can not only navigate robustly, but can learn multiple paths to a single goal in a single trial with performance robust to sensor and motor noise. 
 While the parsimony of encoding and recall makes this algorithm suitable for use on a small autonomous robot, it had not previously been tested in the real world. 
