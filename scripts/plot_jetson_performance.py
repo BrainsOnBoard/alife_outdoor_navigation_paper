@@ -32,13 +32,13 @@ jetson_test_data= [("10", "P.M. raw", 6.2),
                    ("10000", "InfoMax watershed", 387,1825)]
                    #("10000", "InfoMax horizon", 1.1)]
 
-fig, axis = plt.subplots(figsize=(plot_utils.column_width, 4.0),
+fig, axis = plt.subplots(figsize=(plot_utils.column_width, 2.0),
                          frameon=False)
 axis.set_xlabel("Number of stored snapshots")
 axis.set_ylabel("Time [ms]")
 axis.set_yscale("log", nonposy="clip")
 
-plot_utils.plot_grouped_bars(jetson_test_data, 4, fig, axis, legend_pad=0.15)
+plot_utils.plot_grouped_bars(jetson_test_data, 4, fig, axis, legend_pad=0.25)
 
 if not plot_utils.presentation:
     fig.savefig("../figures/jetson_test_performance.eps")

@@ -76,7 +76,7 @@ Here, we show that a robot can navigate fully autonomously outdoors using only a
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=2in]{figures/robot.jpg}
+    \includegraphics[height=2in]{figures/robot.jpg}
     \caption{Robot platform with onboard computation.}￼
     \label{fig:robot}
 \end{figure}
@@ -278,7 +278,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
 We trained both the InfoMax and Perfect Memory algorithms on the images taken along the six routes in our dataset and then used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
 Figure~\ref{fig:vector_fields} shows some example vector fields obtained by plotting this direction at each of the chosen grid locations when using the Perfect Memory algorithm described in section~\ref{sec:ridf_perfect_memory} with the watershed segmentation-based preprocessing discussed in section~\ref{sec:image_database}. 
 While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields/route2_perfect_memory_mask} would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_mask}, errors occur.
-Figure~\ref{fig:aliasing/ridf} shows a RIDF taken at one of the problematic locations on this route \todo{mark grid and add arrows showing aliases} (\SI{600}{\metre}, \SI{720}{\metre}) and it is clear that, as well as the local minima representing the correct heading at \SI{15}{\degree}, there is an additional, slightly lower local minima at \SI{153}{\degree} which is overriding the correct choice.
+Figure~\ref{fig:aliasing/ridf} shows a RIDF taken at one of the problematic locations on this route (\SI{600}{\metre}, \SI{720}{\metre}) and it is clear that, as well as the local minima representing the correct heading at \SI{15}{\degree}, there is an additional, slightly lower local minima at \SI{153}{\degree} which is overriding the correct choice.
 Figures~\ref{fig:aliasing/image_diff_bad}~and~\ref{fig:aliasing/image_diff_good} show the per-pixel differences between the two route images and the rotated versions of the grid image which correspond with these minima and this makes the cause of the problem become clear.
 Although the \emph{shapes} of the skylines in figure~\ref{fig:aliasing/image_diff_good} are clearly more similar than those in figure~\ref{fig:aliasing/image_diff_bad}, there is a vertical offset -- probably caused by camera shake -- which introduces a large difference between the two images.
 
@@ -308,7 +308,7 @@ However, in order to deploy these algorithms on a real robot with constrained on
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=2in]{figures/robot_environment.jpg}
+    \includegraphics[height=2in]{figures/robot_environment.jpg}
     \caption{Environment used for robot testing.}
     \label{fig:robot_environment}
 \end{figure}
