@@ -42,11 +42,11 @@ def plot_comparison(grid_filename1, image_filename1, roll1, output_filename1,
     grid_roll2 = np.roll(grid_image2, roll2, axis=1)
 
     # Calculate difference images
-    diff1 = cv2.absdiff(grid_roll1, route1_image)
-    diff2 = cv2.absdiff(grid_roll2, route2_image)
+    diff1 = np.subtract(grid_roll1, route1_image, dtype=np.int32)
+    diff2 = np.subtract(grid_roll2, route2_image, dtype=np.int32)
 
     # Build a suitable colour map
-    cmap = ListedColormap(sns.color_palette("Reds", 256))
+    cmap = ListedColormap(sns.color_palette("RdBu", 256))
 
     # Plot difference images
     plot_diff(diff1, cmap, output_filename1)
