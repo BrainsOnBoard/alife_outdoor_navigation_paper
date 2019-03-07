@@ -78,6 +78,7 @@ axis.set_ylim((0, 650))
 axis.set_xlabel("X [cm]")
 axis.set_ylabel("Y [cm]")
 axis.set_aspect("equal", "box")
+plot_utils.remove_axis_junk(axis)
 
 actors = [axis.plot(training["x"], training["y"], zorder=1)[0],
           axis.plot(testing_raw["x"], testing_raw["y"], zorder=1)[0],
