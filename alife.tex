@@ -34,23 +34,25 @@ J.C.Knight@sussex.ac.uk} % email of corresponding author
 
 \begin{abstract}
 % Abstract length should not exceed 250 words
-Inspired by the visual scanning behaviour seen in ants, models of visually-guided navigation that operate by searching for previously experienced views of the world have been shown to be capable of facilitating robust navigation.
-However, these algorithms have only been previously tested using simulated agents in virtual environments, not on natural scenes or with physical robotic agents.\todo{Andy is this true? living machines paper does look at natural scenes but not really navigation. }
-In this work we explore the performance of these algorithms both offline, using a dataset consisting of images and video routes captured in an outdoor environment, and running on-board an autonomous robot.
-The results from our experiments show that these insect-inspired algorithms are capable of extracting reliable direction information even when scenes contain few local landmarks and high-levels of noise.
-Furthermore, when running this algorithm using an ANN memory on our autonomous robot, we demonstrate that routes can be precisely recapitulated with our robot only straying an average of \SI{10}{\centi\metre} away from the trained path.
-Additionally, the computation required for this ANN memory does not scale with the number of images used in the training route and thus the ANN provides a compact representation of the knowledge needed to traverse a route. 
-This suggests the feasibility of our approach for long-range visual homing.
+Inspired by the behaviour of ants, models of visually-guided navigation that operate by scanning for previously experienced views of the world have been shown to be capable of robust route navigation. 
+These algorithms operate by training an artificial neural network (ANN) to output a measure of the familiarity views experienced along a training route, hence we refer to them as ‘familiarity-based navigation’ algorithms. 
+One of the reasons to use an ANN is that route knowledge can be encoded and used with memory and computational constraints that are plausible for an ant and as a corollary, well-suited to a small, power-efficient, robot. 
+While these algorithms have been extensively tested in simulations of complex ant habitats, there has been no previous investigation into how an ANN-based route encoding would function in the real world. 
+In this paper we explore the performance of our familiarity-based algorithm -- in which routes are encoded in a single layer network trained with an (unsupervised) Infomax training rule -- running on-board an autonomous robot and recapitulating routes of up to 10m. 
+We show that the Infomax network is capable of delivering reliable direction information, even when scenes contain few local landmarks and high-levels of noise (from changing lighting conditions, uneven terrain). 
+Indeed, routes can be precisely recapitulated, with our robot straying an average of only 10 cm from the trained path. 
+Additionally, rather than be a hindrance, there are also hints that the use of an ANN can ameliorate the issues of very tortuous/kinked training routes which can cause problems for route guidance. 
+Finally, we show that the cost of the required computation does not increase with the number of training views and thus the ANN provides a compact representation of the knowledge needed to traverse a route, suggesting the feasibility of our approach for long-range visual homing.
 \end{abstract}
 
 \section{Introduction}
 Visual homing -- the ability to navigate back to a place of interest using visual information alone -- is a problem of great interest for both engineers seeking to build autonomous robots and neuroethologists seeking to understand its neural basis in animals.
-In the animal kingdom, desert ants are one of the champion visual navigators.
-Despite having small brains and low resolution vision, these ants habitually traverse long routes~(\todo{X} m) through complex terrain.
-However, in direct contrast with most modern robotic methods, to navigate between two locations, insects use route knowledge not mental maps \todo{reference}. 
+In the animal kingdom, desert ants are one of the champion visual navigators~\citep{Wehner2009}.
+Despite having small brains and low resolution vision, these ants habitually traverse long routes~(\todo{X} m) through complex terrain~\citep{Knaden2016}.
+However, in direct contrast with most modern robotic methods, to navigate between two locations, insects use route knowledge not mental maps~\citep{Wehner2006}. 
 That is, insects learn procedural instructions for navigation: ``What should I do here?'' rather than ``Where am I?''. 
 This allows for much simpler mental representations of the visual world with corresponding potential for computational efficiencies.
-We have shown that route knowledge can be learnt and represented holistically without specifying when or what to learn \todo{references}. 
+We have shown that route knowledge can be learnt and represented holistically without specifying when or what to learn~\citep{Baddeley2011, Baddeley2012}. 
 %This means the processing can be highly efficient and suited to space-exploration or long-term robotic missions.
 %Here we test this model of navigation in outdoor environments and show that it can navigate successfully with minimal visual processing on an onboard device, analysing in particular the computational efficiency of the algorithm. 
 
