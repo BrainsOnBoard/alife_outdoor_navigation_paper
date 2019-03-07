@@ -1,6 +1,6 @@
 \documentclass[letterpaper]{article}
 
-\usepackage{natbib,alifeconf,amsmath,listings,subcaption,textcomp,xcolor}  %% The order is important - natbib must be before alifeconf
+\usepackage{natbib,alifeconf,amsmath,listings,subcaption,textcomp,url,xcolor}  %% The order is important - natbib must be before alifeconf
 
 % Automatic formatting of SI units
 \usepackage[binary-units]{siunitx}
@@ -321,7 +321,7 @@ However, in order to deploy these algorithms on a real robot with constrained on
 \end{figure}
 
 \subsection{Autonomous robot}
-Using the implementations of InfoMax and the Perfect Memory algorithms from our Brains-on-Board Robotics \todo{ref} library, we built a simple application which can recapitulate learned routes on the robot described in section~\ref{sec:robot_platform} by running the following simple algorithm every \SI{500}{\milli\second} (based on the performance for 1000 images established in the previous section):
+Using the implementations of InfoMax and the Perfect Memory algorithms from our Brains-on-Board Robotics library~\citep{Dewar2017}, we built a simple application which can recapitulate learned routes on the robot described in section~\ref{sec:robot_platform} by running the following simple algorithm every \SI{500}{\milli\second} (based on the performance for 1000 images established in the previous section):
 %
 \begin{enumerate}
     \item Capture and unwrap a panoramic image.
