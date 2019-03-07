@@ -34,7 +34,7 @@ def plot_ridf(ridf_csv_filename, ridf2_csv_filename=None, ridf2_infomax=False):
     actors = [axis.plot(ridf_data["rotation"], ridf_data["familiarity"], color=colours[0])[0]]
     axis.set_xlabel("Rotation [degrees]")
     axis.set_ylabel("Image difference")
-    plot_utils.remove_axis_junk(axis, ridf2_csv_filename is None)
+    plot_utils.remove_axis_junk(axis, not ridf2_infomax)
 
     if ridf2_csv_filename is not None:
         if ridf2_infomax:

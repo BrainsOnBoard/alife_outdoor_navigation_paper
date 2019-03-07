@@ -55,8 +55,9 @@ def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=
 
     legend_actors.extend(b for b in bars[:group_size])
 
-    # Remove vertical grid
+    # Remove vertical grid and despine
     axis.xaxis.grid(False)
+    sns.despine(ax=axis)
 
     # Use group names as x tick labels
     axis.set_xticks(group_x)

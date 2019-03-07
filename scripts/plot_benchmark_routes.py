@@ -53,6 +53,9 @@ sns.boxplot(x=data["route_name"], y=data["error"], hue=data["variant"],
 # **HACK** remove unwanted AXIS legend
 axis.get_legend().remove()
 
+# Despine
+sns.despine(ax=axis)
+
 # Add in figure legend
 fig.legend(loc="lower center", ncol=4)
 
