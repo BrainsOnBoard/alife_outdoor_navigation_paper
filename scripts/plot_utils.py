@@ -5,12 +5,12 @@ import sys
 
 presentation = "presentation" in sys.argv[1:]
 
-def remove_axis_junk(axis):
+def remove_axis_junk(axis, despine_right=True):
     # Turn off grid
     axis.xaxis.grid(False)
     axis.yaxis.grid(False)
 
-    sns.despine(ax=axis)
+    sns.despine(ax=axis, right=despine_right)
 
 
 def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=0.2):
