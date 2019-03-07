@@ -236,7 +236,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \end{subfigure}
     \caption{Analysis of aliasing shown in figure~\ref{fig:vector_fields/route5_perfect_memory_mask}.
     Using grid image taken at (\SI{600}{\metre}, \SI{720}{\metre}).
-    All images were preprocessed using watershed segmentation algorithm.}
+    All images were pre-processed using watershed segmentation algorithm.}
     \label{fig:aliasing}
 \end{figure}
 
@@ -246,6 +246,29 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \caption{Performance of different algorithms on each of the 6 routes. \todo{decide on consistent names for routes}}
     \label{fig:route_benchmark}
 \end{figure*}
+
+\begin{figure}[t]
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/route3_ridf.eps}
+        \caption{Rotational Image Difference function}
+        \label{fig:light_level/ridf}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/route3_unwrapped_image_diff.png}
+        \caption{Difference image based on raw input images}
+        \label{fig:light_level/raw_image_diff}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{\columnwidth}
+        \includegraphics[width=\columnwidth]{figures/route3_mask_image_diff.png}
+        \caption{Difference image based on sky-segmented input images}
+        \label{fig:light_level/sky_segmented_image_diff}
+    \end{subfigure}
+    \caption{Analysis of poor performance on route 3 when using raw input images.
+    Using grid image taken at (\SI{480}{\metre}, \SI{720}{\metre}).}
+    \label{fig:light_level}
+\end{figure}
 
 \section{Results}
 \subsection{Image database}
@@ -261,6 +284,11 @@ We simulated the effect of this modified algorithm using our database of images 
 Using these headings, we can then ignore matches that would involve heading more than \SI{\pm 90}{\degree} away from the direction of the nearest section of the route.
 Figure~\ref{fig:vector_fields/route5_perfect_memory_constrained_mask} shows that this step solves the aliasing problems in this particular case and figure~\ref{fig:route_benchmark} confirms that, infact, this step improves performance across all algorithms and routes.
 Furthermore, figure~\ref{fig:route_benchmark} also shows that, when using the Perfect Memory algorithm, sky-segmentation improves performance for almost all routes.
+This is particularly noticeable on route 3 (a straight line) where, when using sky-segmented input images, all of the algorithms reconstruct the direction of the route with a very small median error of around \SI{4}{\degree} but, when using unprocessed input images, this increases to around \SI{40}{\degree}.
+Figure~\ref{fig:light_level/ridf} shows that, unlike the situation explored earlier in this section, this is not an aliasing problem as there is only a single minima present in each RIDF.
+However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minima is located at the incorrect location.
+The difference images shown in figures~\ref{fig:light_level/raw_image_diff}~and~\ref{fig:light_level/sky_segmented_image_diff} suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
+
 This improvement is less significant when using the InfoMax algorithm but, 
 \todo{explore case where InfoMax succeeds when PM doesn't}
 
@@ -305,6 +333,7 @@ We then trained each of the navigation algorithms on the resultant dataset of \n
 Throughout this training and testing process, we used the method described in section~\ref{sec:image_database} to track the robot, resulting in the data shown in figure~\ref{fig:robot_paths}.
 The robot was able to successfully recapitulate the training path using each of the navigation and image processing algorithms with little difference in performance immediately apparent in figure~\ref{fig:robot_paths}.
 We confirmed this by calculating the shortest distance to the training path at each location along each recapitulated path and found that, in this environment, there was no significant difference between the performance of the different algorithms and overall the mean of the distance between the training and recapitulated paths was \SI{9}{\centi\metre}, with a standard deviation of \SI{8}{\centi\metre}.
+\todo{same time of day -- differences between algorithms less significant}
 
 \section{Discussion}
 \begin{itemize}
@@ -322,7 +351,11 @@ Furthermore, while our InfoMax implementation uses OpenMP~\todo{citation} to tak
 Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that equation~\ref{eqn:infomax_response} could be evaluated in around \SI{100}{\milli\second} for $120 \times 25$ pixel images -- a $5 \times$ speedup over our current implementation.
 
 \section{Conclusions}
-ss
+\begin{itemize}
+    \item When used in outdoor environments, the performance of insect-inspired visual homing algorithms can be much improved by applying automatic sky-segmentation to the input images. This helps make these algorithms more robust to different lighting and weather conditions.
+    \item InfoMax - better?
+\end{itemize}
+
 \section{Acknowledgements}
 This work was funded by the EPSRC (Brains on Board project, grant number EP/P006094/1).
 We would also like to thank Daniil Sakhapov for his work collecting the `Library Square' database of images, Alex Dewar for developing the BoB robotics framework and Norbert Domcsek for assisting with the data collection for this paper. 
