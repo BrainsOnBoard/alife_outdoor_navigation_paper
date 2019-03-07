@@ -240,13 +240,6 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \label{fig:aliasing}
 \end{figure}
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics{figures/route_benchmark.eps}
-    \caption{Performance of different algorithms on each of the 6 routes. \todo{decide on consistent names for routes}}
-    \label{fig:route_benchmark}
-\end{figure*}
-
 \begin{figure}[t]
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/route3_ridf.eps}
@@ -270,6 +263,13 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \label{fig:light_level}
 \end{figure}
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics{figures/route_benchmark.eps}
+    \caption{Performance of different algorithms on each of the 6 routes. \todo{decide on consistent names for routes}}
+    \label{fig:route_benchmark}
+\end{figure*}
+
 \section{Results}
 \subsection{Image database}
 We trained both the InfoMax and Perfect Memory algorithms on the images taken along the six routes in our dataset and then used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
@@ -289,8 +289,7 @@ Figure~\ref{fig:light_level/ridf} shows that, unlike the situation explored earl
 However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minima is located at the incorrect location.
 The difference images shown in figures~\ref{fig:light_level/raw_image_diff}~and~\ref{fig:light_level/sky_segmented_image_diff} suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
-This improvement is less significant when using the InfoMax algorithm but, 
-\todo{explore case where InfoMax succeeds when PM doesn't}
+After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the InfoMax ANN out-performs the Perfect memory control algorithm in 3 of the 6 routes although this difference is not statistically significant.
 
 \begin{figure}[t]
     \centering
