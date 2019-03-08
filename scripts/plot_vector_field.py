@@ -34,7 +34,7 @@ coords, remaining_coords = load_route(path.join(route_path, route_name), image_i
 colours = sns.color_palette(n_colors=3)
 
 # Create single-column figure
-fig, axis = plt.subplots(figsize=(plot_utils.double_column_width * 0.3, 3.0))
+fig, axis = plt.subplots(figsize=(plot_utils.double_column_width * 0.25, 3.0))
 axis.set_aspect("equal", "box")
 
 # Set axis range to match that of grid
@@ -45,8 +45,8 @@ axis.set_xlabel("X [cm]")
 axis.set_ylabel("Y [cm]")
 
 
-
-plot_utils.remove_axis_junk(axis)
+axis.xaxis.grid(False)
+axis.yaxis.grid(False)
 
 # Plot quivers showing vector field
 heading_radians = np.radians(output_data["best_heading"])
