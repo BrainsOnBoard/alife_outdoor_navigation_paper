@@ -114,11 +114,11 @@ As the RIDF will also have minima at other matching headings, we can use this to
 \begin{figure}[t]
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/360_240.jpg}
-        \caption{Unprocessed panoramic image}
+        \caption{Unprocessed image}
     \end{subfigure}
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/360_240_mask.png}
-        \caption{Sky-segmented panoramic image}
+        \caption{Sky-segmented binary image}
     \end{subfigure}
     \caption{Example panoramic images from our database}
     \label{fig:database_images}
@@ -263,7 +263,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/route3_mask_image_diff.png}
-        \caption{Difference image based on sky-segmented input images}
+        \caption{Difference image based on sky-segmented binary input images}
         \label{fig:light_level/sky_segmented_image_diff}
     \end{subfigure}
     \caption{Analysis of poor performance on route 3 when using raw input images.
@@ -274,7 +274,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
 \begin{figure*}[t]
     \centering
     \includegraphics{figures/route_benchmark.eps}
-    \caption{Performance of different algorithms on each of the 6 routes. \todo{decide on consistent names for routes}}
+    \caption{Performance of different algorithms on each of the 6 routes.}
     \label{fig:route_benchmark}
 \end{figure*}
 
@@ -345,26 +345,54 @@ The robot was able to successfully recapitulate the training path using each of 
 We confirmed this by calculating the shortest distance to the training path at each location along each recapitulated path and found that, in this environment, there was no significant difference between the performance of the different algorithms and overall the mean of the distance between the training and recapitulated paths was \SI{9}{\centi\metre}, with a standard deviation of \SI{8}{\centi\metre}.
 \todo{same time of day -- differences between algorithms less significant}
 
-\section{Discussion}
-\begin{itemize}
-    \item how/why SLAM is the obvious alternative
-    \item General limitations of monocular SLAM
-\end{itemize}
-Typically, visual SLAM implementations extract features such as SURF or SIFT which require several hundreds of milliseconds to extract per frame~\citep{Bay2006}. 
-This makes such implementations impractical to use in real-time, especially on constrained mobile platforms. 
-However, more recent SLAM implementations such as FLaME~\citep{Greene2017} have been shown to run on autonomous quadrotors in only around \SI{10}{\milli\second} per frame. 
-While this is significantly faster than our current InfoMax implementation, \citet{Greene2017} were using a much more powerful Intel CPU on their quadrotor which \citet{Biddulph2018} measured as being $5\times$ faster than a Jetson TX1. 
-Additionally, we used $120 \times 25$ pixel images for all of the work presented in this paper but, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half this number of pixels~($90\times 17$).
-Equation~\ref{eqn:infomax_response} can be implemented as a matrix-vector product -- the computational cost of which scales quadratically with $N$.
-Therefore, using input images with half the number of pixels would quarter the time taken to evaluate equation~\ref{eqn:infomax_response}.
-Furthermore, while our InfoMax implementation uses OpenMP~\todo{citation} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1.
-Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that equation~\ref{eqn:infomax_response} could be evaluated in around \SI{100}{\milli\second} for $120 \times 25$ pixel images -- a $5 \times$ speedup over our current implementation.
+\section{Summary and Discussion}
+In this paper we present the first familiarity-based navigation algorithm that can function effectively in the real world on board a small mobile robot using an ANN-based route encoding. 
+Indeed, we show that in some cases, using an ANN can improve performance as it imposes a level of generalisation (Regularisation perhaps?) meaning that particularly tortuous elements of the training route (which we presume to be from a noisy training process and not something that needs to be recapitulated exactly to enable homing) are smoothed out in the recapitulated trajectories.
 
-\section{Conclusions}
-\begin{itemize}
-    \item When used in outdoor environments, the performance of insect-inspired visual homing algorithms can be much improved by applying automatic sky-segmentation to the input images. This helps make these algorithms more robust to different lighting and weather conditions.
-    \item InfoMax - better?
-\end{itemize}
+In addition, we reinforce results showing that removing the sky and using only a binary image make these algorithms more robust to different lighting and weather conditions~\citep{Philippides2011,Stone2014}. 
+Furthermore, these improvements are seen even if the segmentation is performed automatically on board the robot using an RGB image, processed using a simple watershed algorithm rather than requiring specialist sensors such as a UV camera~(although such a specialist sensor would undoubtedly improve performance and reduce computation).
+Additionally, we show that the computation and storage needed to recapitulate a route using the Infomax ANN does not scale with the number of images used in training.
+To put this into context of robotic control algorithms, this is not typically a property of SLAM based localization systems where more keyframes are accumulated over time although there has been recent work to cap~\citep{Maddern2012} or at least cull~\citep{Mur-Artal2015} the number of keyframes accumulated.
+%While  to the quantity of features features~\citep{Mur-Artal2015}.
+%This is not typically a property of SLAM based localization systems where more keyframes are accumulated over time
+
+Moreover, we note that this is not the only relevant computational advantage of our algorithm. 
+Firstly, our familiarity based algorithms work well for low-resolution visual sensors and, as with the low-res eyes of ants \todo{ref}, it is indeed better to not us high-resolution images~\citep{Wystrach2016}. 
+In contrast, visual SLAM implementations extract features such as SURF or SIFT which require several hundreds of milliseconds to extract per frame~\citep{Bay2006}.
+%Second, in terms of training time, using a route not a map, requires one single traversal through the world, and our Infomax implementation requires one set of weight updates per image used, meaning training time scales linearly with route length and, could in principle be performed in real time [could it???]. 
+%This allows rapid learning of the world, as is seen in the one-trial learning of ants [need a ref from Paul] and compares favourably with SLAM [I’m being purposefully vague!]. 
+Recent SLAM implementations such as FLaME~\citep{Greene2017} have been demonstrated running on autonomous quadrotors at much higher framerates than our current InfoMax implementation, running on a Jetson TX1, can achieve.
+However, not only was FLaME implemented on an Intel CPU which \citet{Biddulph2018} measured as being $5\times$ faster than a Jetson TX1, but the performance of our InfoMax algorithm could be significantly improved.
+Firstly, $120 \times 25$ pixel images were used throughout the work presented in this paper but, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half this number of pixels ($90\times 17$). 
+Equation~\ref{eqn:infomax_response}  can be implemented as a matrix-vector product -- the computational complexity of which scales quadratically with N. Therefore, using input images with half the number of pixels would quarter the time taken to evaluate equation~\ref{eqn:infomax_response}. 
+Furthermore, while our InfoMax implementation uses OpenMP \todo{ref} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1. 
+Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that equation~\ref{eqn:infomax_response} could be evaluated in around \SI{100}{\milli\second} for $120 \times 25$ pixel images -- a $5 \times$ speedup over our current implementation.
+%This paper thus demonstrates the feasibility for efficient rapid learning of visually guided routes for autonomous robots. 
+Thus, as with SLAM which has seen vast increases in performance efficiency, further work on the ANN encoding, visual processing and behavioural strategy, will extend the range of homing and reduce computation and training times still further.
+
+%To put this into context of robotic control algorithms, we note that recent SLAM implementations such as FLaME~\citep{Greene2017} have been shown to run on autonomous quadrotors in only around \SI{10}{\milli\second} per frame. 
+
+% 
+% \section{Discussion}
+% \begin{itemize}
+%     \item how/why SLAM is the obvious alternative
+%     \item General limitations of monocular SLAM
+% \end{itemize}
+% Typically, visual SLAM implementations extract features such as SURF or SIFT which require several hundreds of milliseconds to extract per frame~\citep{Bay2006}. 
+% This makes such implementations impractical to use in real-time, especially on constrained mobile platforms. 
+% However, more recent SLAM implementations such as FLaME~\citep{Greene2017} have been shown to run on autonomous quadrotors in only around \SI{10}{\milli\second} per frame. 
+% While this is significantly faster than our current InfoMax implementation, \citet{Greene2017} were using a much more powerful Intel CPU on their quadrotor which \citet{Biddulph2018} measured as being $5\times$ faster than a Jetson TX1. 
+% Additionally, we used $120 \times 25$ pixel images for all of the work presented in this paper but, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half this number of pixels~($90\times 17$).
+% Equation~\ref{eqn:infomax_response} can be implemented as a matrix-vector product -- the computational cost of which scales quadratically with $N$.
+% Therefore, using input images with half the number of pixels would quarter the time taken to evaluate equation~\ref{eqn:infomax_response}.
+% Furthermore, while our InfoMax implementation uses OpenMP~\todo{citation} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1.
+% Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that equation~\ref{eqn:infomax_response} could be evaluated in around \SI{100}{\milli\second} for $120 \times 25$ pixel images -- a $5 \times$ speedup over our current implementation.
+% 
+% \section{Conclusions}
+% \begin{itemize}
+%     \item When used in outdoor environments, the performance of insect-inspired visual homing algorithms can be much improved by applying automatic sky-segmentation to the input images. This helps make these algorithms more robust to different lighting and weather conditions.
+%     \item InfoMax - better?
+% \end{itemize}
 
 \section{Acknowledgements}
 This work was funded by the EPSRC (Brains on Board project, grant number EP/P006094/1).

@@ -10,6 +10,15 @@ from scipy.stats import iqr
 
 import plot_utils
 
+# Maps to make names from dataset more friendly
+image_input_renames = {"unwrapped": "raw",
+                       "mask": "binary"}
+
+memory_renames = {"PerfectMemory": "P.M.",
+                  "PerfectMemoryConstrained": "P.M. $\pm90^\circ$",
+                  "InfoMax": "InfoMax",
+                  "InfoMaxConstrained": "InfoMax $\pm90^\circ$"}
+
 # Loop through output files from benchmark
 data = None
 for r in sorted(glob("benchmark_results/output_*.csv")):
@@ -24,6 +33,7 @@ for r in sorted(glob("benchmark_results/output_*.csv")):
     if image_input == "horizon" or image_input == "skymask":
         continue
 
+
     # Read error
     errors = np.loadtxt(r, delimiter=",", skiprows=1, usecols=3,
                          converters={3: lambda s: float(s[:-3])},
@@ -32,8 +42,8 @@ for r in sorted(glob("benchmark_results/output_*.csv")):
     # Build compound numpy array from this
     frame = np.empty(errors.shape, dtype={"names": ["route_name", "variant", "error"],
                                           "formats": ["U64", "U64", np.float]})
-    frame["route_name"][:] = route_name
-    frame["variant"][:] = "%s\n%s" % (memory, image_input)
+    frame["route_name"][:] = "Route " + route_name[-1]
+    frame["variant"][:] = "%s %s" % (memory_renames[memory], image_input_renames[image_input])
     frame["error"][:] = np.abs(errors)
 
     # If there's existing data stack on top
@@ -60,7 +70,7 @@ sns.despine(ax=axis)
 fig.legend(loc="lower center", ncol=4, frameon=False)
 
 # Set tight layout and save
-fig.tight_layout(pad=0, rect=[0.0, 0.3, 1.0, 1.0])
+fig.tight_layout(pad=0, rect=[0.0, 0.2, 1.0, 1.0])
 
 if not plot_utils.presentation:
     fig.savefig("../figures/route_benchmark.eps")
