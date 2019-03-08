@@ -292,7 +292,7 @@ Figure~\ref{fig:light_level/ridf} shows that, unlike the situation explored earl
 However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minima is located at the incorrect location.
 The difference images shown in figures~\ref{fig:light_level/raw_image_diff}~and~\ref{fig:light_level/sky_segmented_image_diff} suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
-After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the InfoMax ANN out-performs the Perfect memory control algorithm in 3 of the 6 routes although this difference is not statistically significant.
+After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the InfoMax ANN results in a lower median error than the Perfect memory control algorithm in 3 of the 6 routes although this difference is not statistically significant.
 
 \begin{figure}[t]
     \centering
@@ -305,6 +305,9 @@ After applying sky-segmentation to the input images and only scanning \SI{\pm 90
 \subsection{Computational cost of algorithm}
 In the previous section, we showed that the algorithms described in sections~\ref{sec:ridf_perfect_memory}~and~\ref{sec:familiarity_infomax} are capable of robustly extracting heading direction in outdoor scenes. 
 However, in order to deploy these algorithms on a real robot with constrained on board processing, their performance is important. 
+In order to measure performance in a controlled scenario, we wrote a benchmarking application which runs on the Jetson TX1 and trains either the Perfect memory or the InfoMax algorithm with varying numbers of images and then times how long it takes to extract a heading from a testing image (averaged over \num{100} iterations) using \lstinline{std::chrono::high_resolution_clock}.
+Figure~\ref{fig:jetson_test_performance} shows the performance of our implementation of the InfoMax algorithm compared to the Perfect memory control using $120 \times 25$ pixel input images.
+Clearly, for small numbers of stored images, extracting heading information using the Perfect Memory is faster but, assuming that training images are sampled every \SI{100}{\milli\second}, InfoMax begins to more efficient for routes with only a little over \SI{1}{\minute} of training data making it much more feasible approach for long-range visual homing.
 
 \begin{figure}[t]
     \centering
@@ -327,10 +330,10 @@ Using the implementations of InfoMax and the Perfect Memory algorithms from our 
     \item Capture and unwrap a panoramic image.
     \item Perform one of the image processing steps described in section~\ref{sec:image_database}.
     \item Using either the InfoMax or Perfect Memory algorithm, calculate the familiarity with the processed image ‘in-silico’ when rotated through \SI{\pm 90}{\degree}°.
-    \item Find the orientation with the highest familiarity and, if it is within \SI{4}{\degree} \todo{CHECK}, start driving forwards. Otherwise, start turning in the correct direction to align with the image.
+    \item Find the orientation with the highest familiarity and, if it is within \SI{4}{\degree}, start driving forwards. Otherwise, start turning in the correct direction to align with the image.
 \end{enumerate}
 %
-In order to compare the performance of the navigation algorithms and image processing steps described in sections~\ref{sec:ridf_perfect_memory},~\ref{sec:familiarity_infomax}~and~\ref{sec:image_database} running on the robot, we first manually drove the robot along a sinuous route through the wooded area shown in figure~\ref{fig:robot_environment}, recording training images every \SI{100}{\milli\second}\todo{check}.
+In order to compare the performance of the navigation algorithms and image processing steps described in sections~\ref{sec:ridf_perfect_memory},~\ref{sec:familiarity_infomax}~and~\ref{sec:image_database} running on the robot, we first manually drove the robot along a sinuous route through the wooded area shown in figure~\ref{fig:robot_environment}, recording training images every \SI{100}{\milli\second}.
 We then trained each of the navigation algorithms on the resultant dataset of \num{455} images and allowed the robot to recapitulate the path using the procedure described above.
 Throughout this training and testing process, we used the method described in section~\ref{sec:image_database} to track the robot, resulting in the data shown in figure~\ref{fig:robot_paths}.
 The robot was able to successfully recapitulate the training path using each of the navigation and image processing algorithms with little difference in performance immediately apparent in figure~\ref{fig:robot_paths}.
