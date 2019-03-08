@@ -126,30 +126,14 @@ As the RIDF will also have minima at other matching headings, we can use this to
 
 \begin{figure*}[t]
     \centering
-    \begin{subfigure}[t]{0.24\textwidth}
-        \includegraphics{figures/vector_field_route3_PerfectMemory_mask.eps}
-        \caption{Simple route (route 3)}
-        \label{fig:vector_fields/route3_perfect_memory_mask}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.24\textwidth}
-        \includegraphics{figures/vector_field_route5_PerfectMemory_mask.eps}
-        \caption{Longer route (route 5) where visual aliasing occurs in the middle section}
-        \label{fig:vector_fields/route5_perfect_memory_mask}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.24\textwidth}
-        \includegraphics{figures/vector_field_route5_PerfectMemoryConstrained_mask.eps}
-        \caption{By only considering rotated views within 90° of the route, visual aliasing problems can be avoided in route 5.}
-        \label{fig:vector_fields/route5_perfect_memory_constrained_mask}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.24\textwidth}
-        \includegraphics{figures/vector_field_route5_InfoMaxConstrained_mask.eps}
-        \caption{By only considering rotated views within 90° of the route, visual aliasing problems can be avoided in route 5.}
-        \label{fig:vector_fields/route5_infomax_constrained_mask}
-    \end{subfigure}
-    
-    \caption{Vector fields showing the directions an agent, trained on a route, would move at each point within 4m of the route using a Perfect Memory algorithm with the skyline extracted using the watershed algorithm. 
+    \includegraphics{figures/vector_field.eps}
+    \caption{Vector fields showing the directions an agent, trained on a route, would move at each point within \SI{4}{\metre} of the route using a Perfect Memory algorithm with the skyline extracted using the watershed algorithm. 
     Orange lines shows data from our camera-based tracking of the robot and blue lines show the version simplified using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972}.
-    Green arrows indicate the position and direction the robot starts at.}
+    Green arrows indicate the position and direction the robot starts at.
+    \textbf{A} Simple route (route 3).
+    \textbf{B} Longer route (route 5) where visual aliasing occurs in the middle section.
+    \textbf{C} By only considering rotated views within \SI{90}{\degree} of the route, visual aliasing problems can be avoided in route 5.
+    \textbf{D} Using InfoMax, tortuous elements of route 5 are smoothed out in the vector field.}
     \label{fig:vector_fields}
 \end{figure*}
 
@@ -242,7 +226,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
         \caption{Difference image with correct route image}
         \label{fig:aliasing/image_diff_good}
     \end{subfigure}
-    \caption{Analysis of aliasing shown in figure~\ref{fig:vector_fields/route5_perfect_memory_mask}.
+    \caption{Analysis of aliasing shown in figure~\ref{fig:vector_fields}b.
     Using grid image taken at (\SI{600}{\metre}, \SI{720}{\metre}).
     All images were pre-processed using watershed segmentation algorithm.}
     \label{fig:aliasing}
@@ -282,7 +266,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
 \subsection{Image database}
 We trained both the InfoMax and Perfect Memory algorithms on the images taken along the six routes in our dataset and then used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
 Figure~\ref{fig:vector_fields} shows some example vector fields obtained by plotting this direction at each of the chosen grid locations when using the Perfect Memory algorithm described in section~\ref{sec:ridf_perfect_memory} with the watershed segmentation-based preprocessing discussed in section~\ref{sec:image_database}. 
-While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields/route3_perfect_memory_mask} would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields/route5_perfect_memory_mask}, errors occur.
+While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields}a would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields}b, errors occur.
 Figure~\ref{fig:aliasing/ridf} shows a RIDF taken at one of the problematic locations on this route (\SI{600}{\metre}, \SI{720}{\metre}) and it is clear that, as well as the local minima representing the correct heading at \SI{15}{\degree}, there is an additional, slightly lower local minima at \SI{153}{\degree} which is overriding the correct choice.
 Figures~\ref{fig:aliasing/image_diff_bad}~and~\ref{fig:aliasing/image_diff_good} show the per-pixel differences between the two route images and the rotated versions of the grid image which correspond with these minima and this makes the cause of the problem become clear.
 Although the \emph{shapes} of the skylines in figure~\ref{fig:aliasing/image_diff_good} are clearly more similar than those in figure~\ref{fig:aliasing/image_diff_bad}, there is a vertical offset -- probably caused by camera shake -- which introduces a large difference between the two images.
@@ -290,7 +274,7 @@ Although the \emph{shapes} of the skylines in figure~\ref{fig:aliasing/image_dif
 However, if we were recapitulating the route using a real robot, these false-positive matches could be eliminated and computation could be saved by simply \emph{not} scanning the full \SI{\pm 180}{\degree}. 
 We simulated the effect of this modified algorithm using our database of images by simplifying each route using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972} and calculating the direction of each of the resultant segments.
 Using these headings, we can then ignore matches that would involve heading more than \SI{\pm 90}{\degree} away from the direction of the nearest section of the route.
-Figure~\ref{fig:vector_fields/route5_perfect_memory_constrained_mask} shows that this step solves the aliasing problems in this particular case and figure~\ref{fig:route_benchmark} confirms that, infact, this step improves performance across all algorithms and routes.
+Figure~\ref{fig:vector_fields}c shows that this step solves the aliasing problems in this particular case and figure~\ref{fig:route_benchmark} confirms that, infact, this step improves performance across all algorithms and routes.
 Furthermore, figure~\ref{fig:route_benchmark} also shows that, when using the Perfect Memory algorithm, sky-segmentation improves performance for almost all routes.
 This is particularly noticeable on route 3 (a straight line) where, when using sky-segmented input images, all of the algorithms reconstruct the direction of the route with a very small median error of around \SI{4}{\degree} but, when using unprocessed input images, this increases to around \SI{40}{\degree}.
 Figure~\ref{fig:light_level/ridf} shows that, unlike the situation explored earlier in this section, this is not an aliasing problem as there is only a single minima present in each RIDF.
@@ -298,6 +282,7 @@ However, the magnitude of the average image differences between the raw images i
 The difference images shown in figures~\ref{fig:light_level/raw_image_diff}~and~\ref{fig:light_level/sky_segmented_image_diff} suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
 After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the InfoMax ANN results in a lower median error than the Perfect memory control algorithm in 3 of the 6 routes although this difference is not statistically significant.
+\todo{something about route smoothing}
 
 \begin{figure}[t]
     \centering
