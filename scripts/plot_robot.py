@@ -71,30 +71,29 @@ testing_binary = testing_binary[(testing_binary["y"] >= largest_miny) & (testing
 testing_infomax = testing_infomax[(testing_infomax["y"] >= largest_miny) & (testing_infomax["y"] <= smallest_maxy)]
 testing_infomax_binary = testing_infomax_binary[(testing_infomax_binary["y"] >= largest_miny) & (testing_infomax_binary["y"] <= smallest_maxy)]
 
-fig, axis = plt.subplots(figsize=(plot_utils.column_width, 4.0),frameon=False)
+fig, axis = plt.subplots(figsize=(plot_utils.column_width, 2.25),frameon=False)
 
-axis.set_xlim((0, 240))
-axis.set_ylim((0, 650))
+axis.set_xlim((0, 650))
+axis.set_ylim((0, 240))
 axis.set_xlabel("X [cm]")
 axis.set_ylabel("Y [cm]")
 axis.set_aspect("equal", "box")
 plot_utils.remove_axis_junk(axis)
 
-actors = [axis.plot(training["x"], training["y"], zorder=1)[0],
-          axis.plot(testing_raw["x"], testing_raw["y"], zorder=1)[0],
-          axis.plot(testing_binary["x"], testing_binary["y"], zorder=1)[0],
-          #axis.plot(testing_horizon_vectors["x"], testing_horizon_vectors["y"], zorder=1)[0],
-          axis.plot(testing_infomax["x"], testing_infomax["y"], zorder=1)[0],
-          axis.plot(testing_infomax_binary["x"], testing_infomax_binary["y"], zorder=1)[0]]
+actors = [axis.plot(training["y"], training["x"])[0],
+          axis.plot(testing_raw["y"], testing_raw["x"])[0],
+          axis.plot(testing_binary["y"], testing_binary["x"])[0],
+          axis.plot(testing_infomax["y"], testing_infomax["x"])[0],
+          axis.plot(testing_infomax_binary["y"], testing_infomax_binary["x"])[0]]
 labels = ["Training", "P.M. raw", "P.M. binary",# "P.M. horizon",
           "InfoMax", "InfoMax binary"]
 
-fig.legend(actors, labels, loc="upper right", ncol=1)
-fig.tight_layout(pad=0, rect=(0, 0, 0.7, 1))
+fig.legend(actors, labels, loc="lower center", ncol=2, frameon=False)
+fig.tight_layout(pad=0, rect=[0.0, 0.5, 1.0, 1.0])
 
 if not plot_utils.presentation:
     fig.savefig("../figures/robot_paths.eps")
-
+'''
 training_tree = KDTree(np.transpose(np.vstack((training["x"], training["y"]))))
 distances = [calc_distance_apart(training_tree, testing_raw),
              calc_distance_apart(training_tree, testing_binary),
@@ -114,7 +113,7 @@ if not plot_utils.presentation:
 
 #plot_error_lines(axis, testing_raw_snapshots, training_snapshot_positions, testing_raw_snapshot_positions)
 #plot_error_lines(axis, testing_horizon_vectors_snapshots, training_snapshot_positions, testing_horizon_snapshot_positions)
-
+'''
 
 
 

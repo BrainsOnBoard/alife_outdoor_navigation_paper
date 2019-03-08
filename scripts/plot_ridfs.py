@@ -57,11 +57,11 @@ alias_ridf_fig.tight_layout(pad=0, rect=[0.0, 0.175, 1.0, 1.0])
 
 # Plot good RIDF and RFF
 good_ridf_fig, _, good_ridf_actors = plot_ridf("good_ridf_data.csv", "good_rff_data.csv", True)
-good_ridf_fig.legend(good_ridf_actors, ["Perfect memory", "InfoMax"], ncol=2, loc="lower center")
+good_ridf_fig.legend(good_ridf_actors, ["Perfect memory", "InfoMax"], ncol=2, loc="lower center", frameon=False)
 good_ridf_fig.tight_layout(pad=0, rect=[0.0, 0.175, 1.0, 1.0])
 
 route3_fig, _, route3_actors = plot_ridf("route3_unwrapped_data.csv", "route3_mask_data.csv")
-route3_fig.legend(route3_actors, ["Raw image", "Sky-segmented"], ncol=2, loc="lower center")
+route3_fig.legend(route3_actors, ["Raw image", "Sky-segmented"], ncol=2, loc="lower center", frameon=False)
 route3_fig.tight_layout(pad=0, rect=[0.0, 0.175, 1.0, 1.0])
 
 if not plot_utils.presentation:

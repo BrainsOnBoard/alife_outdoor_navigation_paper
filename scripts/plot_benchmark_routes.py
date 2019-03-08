@@ -57,7 +57,7 @@ axis.get_legend().remove()
 sns.despine(ax=axis)
 
 # Add in figure legend
-fig.legend(loc="lower center", ncol=4)
+fig.legend(loc="lower center", ncol=4, frameon=False)
 
 # Set tight layout and save
 fig.tight_layout(pad=0, rect=[0.0, 0.3, 1.0, 1.0])

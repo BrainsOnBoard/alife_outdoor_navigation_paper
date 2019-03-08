@@ -17,6 +17,7 @@ def plot_diff(diff, cmap, filename):
     axis.grid(False)
     axis.get_xaxis().set_visible(False)
     axis.get_yaxis().set_visible(False)
+    sns.despine(ax=axis, left=True, bottom=True)
 
     fig.tight_layout(pad=0)
 

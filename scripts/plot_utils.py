@@ -66,7 +66,7 @@ def plot_grouped_bars(data, group_size, fig, axis, num_legend_col=2, legend_pad=
 
     # Add legend
     fig.legend(legend_actors[:group_size], group[:group_size],
-                ncol=num_legend_col, loc="lower center")
+                ncol=num_legend_col, loc="lower center", frameon=False)
 
     # Set tight layout and save
     fig.tight_layout(pad=0, rect=[0.0, legend_pad, 1.0, 1.0])
