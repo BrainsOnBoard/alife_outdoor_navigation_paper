@@ -8,7 +8,7 @@ from sys import argv
 from route import load_route
 import plot_utils
 
-def plot_vector_field(output_csv_path, route_path, axis, shared_axes=False):
+def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrows=None, shared_axes=False):
     # Read output
     output_data = np.loadtxt(output_csv_path, delimiter=",", skiprows=1, usecols=(0, 1, 2),
                             converters={0: lambda s: float(s[:-3]),
@@ -27,8 +27,6 @@ def plot_vector_field(output_csv_path, route_path, axis, shared_axes=False):
     # Load route
     coords, remaining_coords = load_route(path.join(route_path, route_name), image_input)
 
-    # Configure palette
-    colours = sns.color_palette(n_colors=3)
 
     # Create single-column figure
 
@@ -48,15 +46,42 @@ def plot_vector_field(output_csv_path, route_path, axis, shared_axes=False):
     axis.xaxis.grid(False)
     axis.yaxis.grid(False)
 
+    # Create (initially all false) mask to select highlighted arrows
+    highlight_mask = np.zeros(len(output_data), dtype=bool)
+    non_highlight_mask = np.ones(len(output_data), dtype=bool)
+
+    # If any highlighted arrows are specified
+    if highlighted_arrows is not None:
+        # Loop through their coordinates
+        for (x, y) in highlighted_arrows[0]:
+            # Build mask to select coordinates
+            mask = (output_data["x"] == x) & (output_data["y"] == y)
+            assert np.sum(mask) == 1
+
+            # Or mask with highlight mask
+            highlight_mask = np.logical_or(highlight_mask, mask)
+
+        # Build NON highlight mask
+        non_highlight_mask  = np.logical_not(highlight_mask)
+
     # Plot quivers showing vector field
     heading_radians = np.radians(output_data["best_heading"])
     u = np.cos(heading_radians)
     v = np.sin(heading_radians)
-    axis.quiver(output_data["x"], output_data["y"], u, v, angles="xy", zorder=3)
+
+
+    axis.quiver(output_data["x"][non_highlight_mask], output_data["y"][non_highlight_mask],
+                u[non_highlight_mask], v[non_highlight_mask],
+                angles="xy", zorder=5)
+
+    if highlighted_arrows is not None:
+        axis.quiver(output_data["x"][highlight_mask], output_data["y"][highlight_mask],
+                    u[highlight_mask], v[highlight_mask],
+                    angles="xy", zorder=5, scale=10.0, width=0.015, color=cmap[highlighted_arrows[1]])
 
     # Plot route data
-    axis.plot(coords[:,0], coords[:,1], zorder=1, color=colours[1])
-    axis.plot(remaining_coords[:,0], remaining_coords[:,1], zorder=2, color=colours[0])
+    axis.plot(coords[:,0], coords[:,1], zorder=1, color=cmap[1])
+    axis.plot(remaining_coords[:,0], remaining_coords[:,1], zorder=3, color=cmap[0])
 
     first_x = remaining_coords[0, 0]
     first_y = remaining_coords[0, 1]
@@ -66,7 +91,7 @@ def plot_vector_field(output_csv_path, route_path, axis, shared_axes=False):
     dir_x *= scale
     dir_y *= scale
     axis.arrow(first_x - dir_x, first_y - dir_y, dir_x, dir_y,
-            color=colours[2], length_includes_head=True, head_width=30.0, zorder=4)
+            color=cmap[2], length_includes_head=True, head_width=30.0, zorder=7)
 
     return route_name, memory, image_input, data_range
 
@@ -81,8 +106,11 @@ if __name__ == "__main__":
     # Create column-width figure
     fig, axis = plt.subplots(figsize=(plot_utils.double_column_width * 0.25, 3.0))
 
+    # Configure palette
+    colours = sns.color_palette(n_colors=3)
+
     # Plot vector field
-    route_name, memory, image_input = plot_vector_field(output_csv_path, route_path, axis)[:3]
+    route_name, memory, image_input = plot_vector_field(output_csv_path, route_path, axis, colours)[:3]
 
     fig.tight_layout(pad=0)
     if not plot_utils.presentation:
