@@ -9,7 +9,7 @@ from sys import argv
 
 import plot_utils
 
-def plot_diff(diff, cmap, filename):
+def plot_diff(diff, cmap, filename, subtitle):
     fig, axis = plt.subplots(figsize=(plot_utils.column_width, (plot_utils.column_width / diff.shape[1]) * diff.shape[0]))
 
     axis.imshow(diff, interpolation="none", cmap=cmap)
@@ -17,6 +17,7 @@ def plot_diff(diff, cmap, filename):
     axis.grid(False)
     axis.get_xaxis().set_visible(False)
     axis.get_yaxis().set_visible(False)
+    axis.set_title(subtitle, loc="left", pad=-8.0)
     sns.despine(ax=axis, left=True, bottom=True)
 
     fig.tight_layout(pad=0)
@@ -50,15 +51,15 @@ def plot_comparison(grid_filename1, image_filename1, roll1, output_filename1,
     cmap = ListedColormap(sns.color_palette("RdBu", 256))
 
     # Plot difference images
-    plot_diff(diff1, cmap, output_filename1)
-    plot_diff(diff2, cmap, output_filename2)
+    plot_diff(diff1, cmap, output_filename1, "B")
+    plot_diff(diff2, cmap, output_filename2, "C")
 
 # Check we only get a single argument
 assert len(argv) == 2
 
 grid_filename = path.join(argv[1], "image_grids", "mid_day", "mask", "200_240_mask.png")
-plot_comparison(grid_filename, path.join(argv[1], "routes", "route5", "mask", "unwrapped_1055_mask.png"), -5 * 6, "../figures/image_diff_good.png",
-                grid_filename, path.join(argv[1], "routes", "route5", "mask", "unwrapped_180_mask.png"), -51 * 6, "../figures/image_diff_bad.png")
+plot_comparison(grid_filename, path.join(argv[1], "routes", "route5", "mask", "unwrapped_180_mask.png"), -51 * 6, "../figures/image_diff_bad.png",
+                grid_filename, path.join(argv[1], "routes", "route5", "mask", "unwrapped_1055_mask.png"), -5 * 6, "../figures/image_diff_good.png")
 
 plot_comparison(path.join(argv[1], "image_grids", "mid_day", "unwrapped", "160_240.jpg"), path.join(argv[1], "routes", "route3", "unwrapped", "unwrapped_727.jpg"), -81 * 6, "../figures/route3_unwrapped_image_diff.png",
                 path.join(argv[1], "image_grids", "mid_day", "mask", "160_240_mask.png"), path.join(argv[1], "routes", "route3", "mask", "unwrapped_1006_mask.png"), -61 * 6, "../figures/route3_mask_image_diff.png")
