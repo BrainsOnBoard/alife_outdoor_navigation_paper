@@ -29,7 +29,6 @@ def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrow
 
 
     # Create single-column figure
-
     axis.set_aspect("equal", "box")
 
     data_range = (np.amin(output_data["x"]), np.amax(output_data["x"]),
@@ -45,6 +44,7 @@ def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrow
 
     axis.xaxis.grid(False)
     axis.yaxis.grid(False)
+    sns.despine(ax=axis)
 
     # Create (initially all false) mask to select highlighted arrows
     highlight_mask = np.zeros(len(output_data), dtype=bool)
@@ -64,16 +64,17 @@ def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrow
         # Build NON highlight mask
         non_highlight_mask  = np.logical_not(highlight_mask)
 
-    # Plot quivers showing vector field
+    # Build U and V coordinate for quivers
     heading_radians = np.radians(output_data["best_heading"])
     u = np.cos(heading_radians)
     v = np.sin(heading_radians)
 
-
+    # Plot non-hightlighted portion of vector field
     axis.quiver(output_data["x"][non_highlight_mask], output_data["y"][non_highlight_mask],
                 u[non_highlight_mask], v[non_highlight_mask],
                 angles="xy", zorder=5)
 
+    # Plot highlighted portion of vector field
     if highlighted_arrows is not None:
         axis.quiver(output_data["x"][highlight_mask], output_data["y"][highlight_mask],
                     u[highlight_mask], v[highlight_mask],
