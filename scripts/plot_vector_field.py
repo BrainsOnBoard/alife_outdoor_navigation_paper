@@ -8,7 +8,8 @@ from sys import argv
 from route import load_route
 import plot_utils
 
-def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrows=None, shared_axes=False):
+def plot_vector_field(output_csv_path, route_path, axis, cmap,
+                      highlighted_arrows=[], highlighted_snapshots=[], shared_axes=False):
     # Read output
     output_data = np.loadtxt(output_csv_path, delimiter=",", skiprows=1, usecols=(0, 1, 2),
                             converters={0: lambda s: float(s[:-3]),
@@ -33,6 +34,13 @@ def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrow
 
     data_range = (np.amin(output_data["x"]), np.amax(output_data["x"]),
                   np.amin(output_data["y"]), np.amax(output_data["y"]))
+
+    # Build U and V coordinate for quivers
+    heading_radians = np.radians(output_data["best_heading"])
+    u = np.cos(heading_radians)
+    v = np.sin(heading_radians)
+
+    # If we're not using a shared axis
     if not shared_axes:
         # Set axis range to match that of grid
         axis.set_xlim(data_range[:2])
@@ -46,44 +54,7 @@ def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrow
     axis.yaxis.grid(False)
     sns.despine(ax=axis)
 
-    # Create (initially all false) mask to select highlighted arrows
-    highlight_mask = np.zeros(len(output_data), dtype=bool)
-    non_highlight_mask = np.ones(len(output_data), dtype=bool)
-
-    # If any highlighted arrows are specified
-    if highlighted_arrows is not None:
-        # Loop through their coordinates
-        for (x, y) in highlighted_arrows[0]:
-            # Build mask to select coordinates
-            mask = (output_data["x"] == x) & (output_data["y"] == y)
-            assert np.sum(mask) == 1
-
-            # Or mask with highlight mask
-            highlight_mask = np.logical_or(highlight_mask, mask)
-
-        # Build NON highlight mask
-        non_highlight_mask  = np.logical_not(highlight_mask)
-
-    # Build U and V coordinate for quivers
-    heading_radians = np.radians(output_data["best_heading"])
-    u = np.cos(heading_radians)
-    v = np.sin(heading_radians)
-
-    # Plot non-hightlighted portion of vector field
-    axis.quiver(output_data["x"][non_highlight_mask], output_data["y"][non_highlight_mask],
-                u[non_highlight_mask], v[non_highlight_mask],
-                angles="xy", zorder=5)
-
-    # Plot highlighted portion of vector field
-    if highlighted_arrows is not None:
-        axis.quiver(output_data["x"][highlight_mask], output_data["y"][highlight_mask],
-                    u[highlight_mask], v[highlight_mask],
-                    angles="xy", zorder=5, scale=10.0, width=0.015, color=cmap[highlighted_arrows[1]])
-
-    # Plot route data
-    axis.plot(coords[:,0], coords[:,1], zorder=1, color=cmap[1])
-    axis.plot(remaining_coords[:,0], remaining_coords[:,1], zorder=3, color=cmap[0])
-
+    # Determine start position and direction for arrow marking start of route
     first_x = remaining_coords[0, 0]
     first_y = remaining_coords[0, 1]
     dir_x = remaining_coords[1, 0] - first_x
@@ -91,8 +62,52 @@ def plot_vector_field(output_csv_path, route_path, axis, cmap, highlighted_arrow
     scale = 100.0 / np.sqrt((dir_x * dir_x) + (dir_y * dir_y))
     dir_x *= scale
     dir_y *= scale
-    axis.arrow(first_x - dir_x, first_y - dir_y, dir_x, dir_y,
-            color=cmap[2], length_includes_head=True, head_width=30.0, zorder=7)
+
+    # Start lists of arrows with this
+    arrows = [(first_x - dir_x, first_y - dir_y, dir_x, dir_y, cmap[2])]
+
+    # Create (initially all true) mask to select quiver arrows to draw
+    non_highlight_mask = np.ones(len(output_data), dtype=bool)
+
+    # Loop through highlighted arrows
+    for (x, y, c) in highlighted_arrows:
+        # Build mask to select coordinates
+        indices = np.where((output_data["x"] == x) & (output_data["y"] == y))[0]
+        assert len(indices) == 1
+
+        # Clear entry in non-highlight mask so this quiver arrow doesn't get drawn
+        i = indices[0]
+        non_highlight_mask[i] = False
+
+        # Add arrow to list
+        arrows.append((output_data["x"][i], output_data["y"][i], u[i] * 100.0, v[i] * 100.0, cmap[c]))
+
+    # Loop through highlighted snapshots
+    for (i, a, c) in highlighted_snapshots:
+        # Extract x and y coordinates of snapshot from raw data
+        start_x = coords[i,0]
+        start_y = coords[i,1]
+
+        # Calculate direction from heading angle
+        dir_x = 100.0 * np.cos(np.radians(90.0 + a))
+        dir_y = 100.0 * np.sin(np.radians(90.0 + a))
+
+        # Add arrow to list
+        arrows.append((start_x, start_y, dir_x, dir_y, cmap[c]))
+
+    # Plot non-hightlighted portion of vector field
+    axis.quiver(output_data["x"][non_highlight_mask], output_data["y"][non_highlight_mask],
+                u[non_highlight_mask], v[non_highlight_mask],
+                angles="xy", zorder=5)
+
+    # Plot route data
+    axis.plot(coords[:,0], coords[:,1], zorder=1, color=cmap[1])
+    axis.plot(remaining_coords[:,0], remaining_coords[:,1], zorder=3, color=cmap[0])
+
+    # Loop through list of arrows and draw
+    for (start_x, start_y, dir_x, dir_y, col) in arrows:
+        axis.arrow(start_x, start_y, dir_x, dir_y,
+                   color=col, length_includes_head=True, head_width=30.0, zorder=7)
 
     return route_name, memory, image_input, data_range
 

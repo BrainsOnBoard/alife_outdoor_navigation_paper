@@ -130,7 +130,7 @@ As the RIDF will also have minima at other matching headings, we can use this to
     \caption{Vector fields showing the directions an agent, trained on a route, would move at each point within \SI{4}{\metre} of the route using a Perfect Memory algorithm with the skyline extracted using the watershed algorithm. 
     Orange lines shows data from our camera-based tracking of the robot and blue lines show the version simplified using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972}.
     Green arrows indicate the position and direction the robot starts at.
-    Bold red arrows indicate positions in the vector field referred to in later analysis.
+    Red and pink arrows indicate positions in the vector field referred to in later analysis.
     \textbf{A} Simple route (route 3).
     \textbf{B} Longer route (route 5) where visual aliasing occurs in the middle section.
     \textbf{C} By only considering rotated views within \SI{90}{\degree} of the route, visual aliasing problems can be avoided in route 5.
@@ -223,8 +223,8 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     Using grid image taken at location marked with red arrow in figures~\ref{fig:vector_fields}b~and~\ref{fig:vector_fields}c (\SI{600}{\metre}, \SI{720}{\metre}).
     All images were pre-processed using watershed segmentation algorithm.
     \textbf{A} Rotational Image Difference function.
-    \textbf{B} Difference image with visual aliased route image.
-    \textbf{C} Difference image with correct route image}
+    \textbf{B} Difference image with visual aliased route image found at location marked with pink arrow in figure~\ref{fig:vector_fields}b.
+    \textbf{C} Difference image with correct route image found at location marked with pink arrow in figure~\ref{fig:vector_fields}c}
     \label{fig:aliasing}
 \end{figure}
 
