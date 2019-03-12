@@ -52,7 +52,7 @@ Despite having small brains and low resolution vision, these ants can learn visu
 However, in direct contrast with most modern robotic methods, to navigate between two locations, insects use route knowledge not mental maps~\citep{Wehner2006}. 
 That is, insects learn procedural instructions for navigation: ``What should I do here?'' rather than ``Where am I?''. 
 This allows for much simpler mental representations of the visual world with corresponding potential for computational efficiencies.
-We have shown that route knowledge can be learnt and represented holistically using an artificial neural network (ANN)~\todo{cite andy}, without specifying when or what to learn~\citep{Baddeley2011} and from a single exposure to the route data~\citep{Baddeley2012}. 
+We have shown that route knowledge can be learnt and represented holistically using an artificial neural network (ANN)~\citep{Philippides2015}, without specifying when or what to learn~\citep{Baddeley2011} and from a single exposure to the route data~\citep{Baddeley2012}. 
 One of the reasons to use an ANN is that route knowledge can be encoded and used with memory and computational constraints that do not scale with route length, are plausible for an ant and, as a corollary, well-suited to a small, power-efficient, robot. 
 In this paper we therefore explore how well a single layer ANN can guide a small robot through real world routes of up to \SI{10}{\metre} with all compution being performed on-board.
 %While these algorithms have been extensively tested in simulations of complex ant habitats, there has been no previous investigation into how an ANN-based route encoding would function in the real world. 
@@ -249,6 +249,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
 
 \section{Results}
 \subsection{Offline simulations}
+\label{sec:offline_simulations}
 We trained both the InfoMax and Perfect Memory algorithms on the images taken along the six routes in our dataset and then used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
 Figure~\ref{fig:vector_fields} shows some example vector fields obtained by plotting this direction at each of the chosen grid locations when using the Perfect Memory algorithm described in section~\ref{sec:ridf_perfect_memory} with the watershed segmentation-based pre-processing discussed in section~\ref{sec:image_database}. 
 While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields}a would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields}b, errors occur.
@@ -317,7 +318,6 @@ We then trained each of the navigation algorithms on the resultant dataset of \n
 Throughout this training and testing process, we used the method described in section~\ref{sec:image_database} to track the robot, resulting in the data shown in figure~\ref{fig:robot_paths}.
 The robot was able to successfully recapitulate the training path using each of the navigation and image processing algorithms with little difference in performance immediately apparent in figure~\ref{fig:robot_paths}.
 We confirmed this by calculating the shortest distance to the training path at each location along each recapitulated path and found that, in this environment, there was no significant difference between the performance of the different algorithms and overall the mean of the distance between the training and recapitulated paths was \SI{9}{\centi\metre}, with a standard deviation of \SI{8}{\centi\metre}.
-\todo{same time of day -- differences between algorithms less significant}
 
 \section{Summary and Discussion}
 In this paper we present the first familiarity-based navigation algorithm that can function effectively in the real world on board a small mobile robot using an ANN-based route encoding. 
@@ -325,6 +325,9 @@ Indeed, we show that in some cases, using an ANN can improve performance as it i
 
 In addition, we reinforce results showing that removing the sky and using only a binary image make these algorithms more robust to different lighting and weather conditions~\citep{Philippides2011,Stone2014}. 
 Furthermore, these improvements are seen even if the segmentation is performed automatically on board the robot using an RGB image, processed using a simple watershed algorithm rather than requiring specialist sensors such as a UV camera~(although such a specialist sensor would undoubtedly improve performance and reduce computation).
+Interestingly, these improvements are not noticeable in the results collected using the autonomous robot.
+We believe that this is due to the fact that we performed these experiments in a more enclosed environment, where the sky covered a smaller portion of each image and because the testing and training both occurred at the same time of day.
+These two factors both act to reduce the differences between the raw images meaning that raw image comparisons are successful.
 Additionally, we show that the computation and storage needed to recapitulate a route using the Infomax ANN does not scale with the number of images used in training.
 To put this into context of robotic control algorithms, this is not typically a property of SLAM based localization systems where more keyframes are accumulated over time although there has been recent work to cap~\citep{Maddern2012} or at least cull~\citep{Mur-Artal2015} the number of keyframes accumulated.
 %While  to the quantity of features features~\citep{Mur-Artal2015}.
@@ -344,34 +347,10 @@ Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerat
 %This paper thus demonstrates the feasibility for efficient rapid learning of visually guided routes for autonomous robots. 
 Thus, as with SLAM which has seen vast increases in performance efficiency, further work on the ANN encoding, visual processing and behavioural strategy, will extend the range of homing and reduce computation and training times still further.
 
-%To put this into context of robotic control algorithms, we note that recent SLAM implementations such as FLaME~\citep{Greene2017} have been shown to run on autonomous quadrotors in only around \SI{10}{\milli\second} per frame. 
-
-% 
-% \section{Discussion}
-% \begin{itemize}
-%     \item how/why SLAM is the obvious alternative
-%     \item General limitations of monocular SLAM
-% \end{itemize}
-% Typically, visual SLAM implementations extract features such as SURF or SIFT which require several hundreds of milliseconds to extract per frame~\citep{Bay2006}. 
-% This makes such implementations impractical to use in real-time, especially on constrained mobile platforms. 
-% However, more recent SLAM implementations such as FLaME~\citep{Greene2017} have been shown to run on autonomous quadrotors in only around \SI{10}{\milli\second} per frame. 
-% While this is significantly faster than our current InfoMax implementation, \citet{Greene2017} were using a much more powerful Intel CPU on their quadrotor which \citet{Biddulph2018} measured as being $5\times$ faster than a Jetson TX1. 
-% Additionally, we used $120 \times 25$ pixel images for all of the work presented in this paper but, when \citet{Baddeley2012} first demonstrated InfoMax for visual navigation, they used input images with around half this number of pixels~($90\times 17$).
-% Equation~\ref{eqn:infomax_response} can be implemented as a matrix-vector product -- the computational cost of which scales quadratically with $N$.
-% Therefore, using input images with half the number of pixels would quarter the time taken to evaluate equation~\ref{eqn:infomax_response}.
-% Furthermore, while our InfoMax implementation uses OpenMP~\todo{citation} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1.
-% Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that equation~\ref{eqn:infomax_response} could be evaluated in around \SI{100}{\milli\second} for $120 \times 25$ pixel images -- a $5 \times$ speedup over our current implementation.
-% 
-% \section{Conclusions}
-% \begin{itemize}
-%     \item When used in outdoor environments, the performance of insect-inspired visual homing algorithms can be much improved by applying automatic sky-segmentation to the input images. This helps make these algorithms more robust to different lighting and weather conditions.
-%     \item InfoMax - better?
-% \end{itemize}
-
 \section{Acknowledgements}
 This work was funded by the EPSRC (Brains on Board project, grant number EP/P006094/1).
 
-\footnotesize
+\scriptsize
 \bibliographystyle{apalike}
 \bibliography{alife} % replace by the name of your .bib file
 
