@@ -53,7 +53,7 @@ for r in sorted(glob("benchmark_results/output_*.csv")):
         data = np.hstack((data, frame))
 
 
-fig, axis = plt.subplots(figsize=(plot_utils.double_column_width, 3.0),
+fig, axis = plt.subplots(figsize=(plot_utils.double_column_width, 2.5),
                          frameon=False)
 axis.set_ylabel("Absolute angular error\n[degrees]")
 

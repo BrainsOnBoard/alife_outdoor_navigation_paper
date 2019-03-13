@@ -114,8 +114,8 @@ In the following sections we first describe the perfect memory algorithm before 
         \includegraphics[width=\columnwidth]{figures/360_240_mask.png}
     \end{subfigure}
     \caption{Example panoramic images from our database.
-    \textbf{A} Raw unprocessed image.
-    \textbf{B} Sky-segmented binary image.}
+    \textbf{A}~Raw unprocessed image.
+    \textbf{B}~Sky-segmented binary image.}
     \label{fig:database_images}
 \end{figure*}
 
@@ -142,10 +142,10 @@ As the RIDF will also have minima at other matching headings, we can use this to
     Orange lines shows data from our camera-based tracking of the robot and blue lines show the version simplified using the Ramer-Douglas-Peucker algorithm~\citep{Ramer1972}.
     Green arrows indicate the position and direction the robot starts at.
     Red and pink arrows indicate positions in the vector field referred to in later analysis.
-    \textbf{A} Simple route (route 3).
-    \textbf{B} Longer route (route 5) where visual aliasing occurs in the middle section.
-    \textbf{C} By only considering rotated views within \SI{90}{\degree} of the route, visual aliasing problems can be avoided in route 5.
-    \textbf{D} Using InfoMax, tortuous elements of route 5 are smoothed out in the vector field.}
+    \textbf{A}~Simple route (route 3).
+    \textbf{B}~Longer route (route 5) where visual aliasing occurs in the middle section.
+    \textbf{C}~By only considering rotated views within \SI{90}{\degree} of the route, visual aliasing problems can be avoided in route 5.
+    \textbf{D}~Using InfoMax, tortuous elements of route 5 are smoothed out in the vector field.}
     \label{fig:vector_fields}
 \end{figure*}
 
@@ -219,9 +219,9 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \caption{Analysis of aliasing shown in Figure~\ref{fig:vector_fields}b.
     Using grid image taken at location marked with red arrow in Figures~\ref{fig:vector_fields}b~and~\ref{fig:vector_fields}c (\SI{600}{\metre}, \SI{720}{\metre}).
     All images were pre-processed using watershed segmentation algorithm.
-    \textbf{A} Rotational Image Difference function.
-    \textbf{B} Difference image with visual aliased route image found at location marked with pink arrow in Figure~\ref{fig:vector_fields}b.
-    \textbf{C} Difference image with correct route image found at location marked with pink arrow in Figure~\ref{fig:vector_fields}c}
+    \textbf{A}~Rotational Image Difference function.
+    \textbf{B}~Difference image with visual aliased route image found at location marked with pink arrow in Figure~\ref{fig:vector_fields}b.
+    \textbf{C}~Difference image with correct route image found at location marked with pink arrow in Figure~\ref{fig:vector_fields}c}
     \label{fig:aliasing}
 \end{figure}
 
@@ -237,16 +237,17 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     \end{subfigure}
     \caption{Analysis of poor performance on route 3 when using raw input images.
     Using grid image taken at location marked with red arrow in figure~\ref{fig:vector_fields}a (\SI{480}{\metre}, \SI{720}{\metre}).
-    \textbf{A} Rotational Image Difference function.
-    \textbf{B} Difference image based on raw input images.
-    \textbf{C} Difference image based on sky-segmented binary input images.}
+    \textbf{A}~Rotational Image Difference function.
+    \textbf{B}~Difference image based on raw input images.
+    \textbf{C}~Difference image based on sky-segmented binary input images.}
     \label{fig:light_level}
 \end{figure}
 
 \begin{figure*}[t]
     \centering
     \includegraphics{figures/route_benchmark.eps}
-    \caption{Performance of different algorithms on each of the 6 routes.}
+    \caption{Performance of different algorithms on each of the 6 routes.
+    `Boxes' indicates the three quartile values of each error distribution, `whiskers' indicate error values which lie within \num{1.5} IQRs of the upper and lower quartiles and values outside of this range are marked as outliers.}
     \label{fig:route_benchmark}
 \end{figure*}
 
@@ -281,7 +282,8 @@ Furthermore, if we compare Figures~\ref{fig:vector_fields}c~and~\ref{fig:vector_
     \centering
     \includegraphics{figures/jetson_test_performance.eps}
     \caption{Performance of visual navigation algorithms running on Jetson TX1. 
-    Reported times are measured using \lstinline{std::chrono::high_resolution_clock} and average is taken over \num{100} images.}
+    Reported times are measured using \lstinline{std::chrono::high_resolution_clock} and average is taken over \num{100} images.
+    Variances between times are too small to measure so we do not include error bars.}
     \label{fig:jetson_test_performance}
 \end{figure}
 
