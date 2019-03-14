@@ -16,8 +16,8 @@ image_input_renames = {"unwrapped": "raw",
 
 memory_renames = {"PerfectMemory": "P.M.",
                   "PerfectMemoryConstrained": "P.M. $\pm90^\circ$",
-                  "InfoMax": "InfoMax",
-                  "InfoMaxConstrained": "InfoMax $\pm90^\circ$"}
+                  "InfoMax": "Infomax",
+                  "InfoMaxConstrained": "Infomax $\pm90^\circ$"}
 
 # Loop through output files from benchmark
 data = None

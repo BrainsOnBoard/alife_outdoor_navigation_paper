@@ -86,7 +86,7 @@ actors = [axis.plot(training["y"], training["x"])[0],
           axis.plot(testing_infomax["y"], testing_infomax["x"])[0],
           axis.plot(testing_infomax_binary["y"], testing_infomax_binary["x"])[0]]
 labels = ["Training", "P.M. raw", "P.M. binary",# "P.M. horizon",
-          "InfoMax", "InfoMax binary"]
+          "Infomax", "Infomax binary"]
 
 fig.legend(actors, labels, loc="lower center", ncol=2, frameon=False)
 fig.tight_layout(pad=0, rect=[0.0, 0.5, 1.0, 1.0])
