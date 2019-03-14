@@ -1,6 +1,6 @@
 \documentclass[letterpaper]{article}
 
-\usepackage{natbib,alifeconf,amsmath,listings,subcaption,textcomp,url,xcolor, flushend}  %% The order is important - natbib must be before alifeconf
+\usepackage{natbib,alifeconf,amsmath,listings,hyperref,subcaption,textcomp,url,xcolor,flushend}  %% The order is important - natbib must be before alifeconf
 
 % Automatic formatting of SI units
 \usepackage[binary-units]{siunitx}
@@ -38,7 +38,7 @@ J.C.Knight@sussex.ac.uk} % email of corresponding author
 \begin{abstract}
 % Abstract length should not exceed 250 words
 Inspired by the behaviour of ants, models of visually-guided navigation that operate by scanning for previously experienced views of the world have been shown to be capable of robust route navigation. 
-These algorithms operate by training an artificial neural network~(ANN) to output a measure of the familiarity of any view after training  with the views experienced along a training route.
+These algorithms operate by using views experienced along a training route to train an artificial neural network~(ANN) to output a measure of the familiarity of any new view.
 Hence we refer to them as familiarity-based navigation algorithms.
 In this paper we show that an ANN with an Infomax learning rule is capable of delivering reliable direction information, even when scenes contain few local landmarks and high-levels of noise (from changing lighting conditions, uneven terrain etc). 
 Indeed, routes can be precisely recapitulated, with our robot straying an average of only \SI{10}{\centi\metre} from the \SI{6}{\metre} training path. 
@@ -185,7 +185,7 @@ Finally, the response of the network to the presentation of an unseen N-dimensio
     \text{fam}(\vec{x})=\sum\limits_{i=1}^N |h_{i}|     \label{eqn:infomax_response}
 \end{align}
 %
-where $||$ denotes the absolute value.
+where $|\cdot|$ denotes the absolute value.
 By applying $C(\vec{a}, \theta)$ to the ANN for a range of $\theta$, an RFF can be calculated from $\text{fam}(\vec{x})$.
 
 \subsection{Robot platform}
@@ -272,7 +272,7 @@ The distributions of these errors across all of the routes, algorithms and image
 Furthermore, Figure~\ref{fig:route_benchmark} also shows that, when using the Perfect Memory algorithm, sky-segmentation improves performance for almost all routes.
 This is particularly noticeable on route 3 (a straight line) where, when using sky-segmented input images, all of the algorithms reconstruct the direction of the route with a very small median error of around \SI{4}{\degree} but, when using unprocessed input images, this increases to around \SI{40}{\degree}.
 Figure~\ref{fig:light_level}a shows that, unlike the situation explored earlier in this section, this is not an aliasing problem as there is only a single minimum present in each RIDF.
-However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minima is located at the incorrect location.
+However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minimum is located at the incorrect location.
 The difference images shown in Figures~\ref{fig:light_level}b~and~\ref{fig:light_level}c suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
 After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the Infomax ANN results in a lower median error than the Perfect Memory control algorithm in 3 of the 6 routes although this difference is not statistically significant.
@@ -292,7 +292,7 @@ In the previous section, we showed that the algorithms described in Sections~\re
 However, in order to deploy these algorithms on a real robot with constrained on board processing, their performance is important. 
 In order to measure performance in a controlled scenario, we wrote a benchmarking application in C++ which runs on the Jetson TX1 and trains either the Perfect Memory or the Infomax algorithm with varying numbers of images and then measures how long it takes to extract a heading from a testing image (averaged over \num{100} iterations) using \lstinline{std::chrono::high_resolution_clock}.
 Figure~\ref{fig:jetson_test_performance} shows the performance of our implementation of the Infomax algorithm compared to the Perfect Memory control using $120 \times 25$ pixel input images.
-Clearly, for small numbers of stored images, extracting heading information using the Perfect Memory is faster but, assuming that training images are sampled every \SI{100}{\milli\second}, Infomax begins to more efficient for routes with only a little over \SI{1}{\minute} of training data making it much more feasible approach for long-range visual homing.
+Clearly, for small numbers of stored images, extracting heading information using the Perfect Memory is faster but, assuming that training images are sampled every \SI{100}{\milli\second}, Infomax begins to be more efficient for routes with only a little over \SI{1}{\minute} of training data making it much more feasible approach for long-range visual homing.
 
 \begin{figure}[t]
     \centering
