@@ -78,7 +78,7 @@ The paths of these simulated agents have then been shown to demonstrate many of 
 Here, we follow \citet{Baddeley2012} who showed that a single layer network trained with an Infomax learning rule can not only navigate robustly, but can learn multiple paths to a single goal in a single trial with performance robust to sensor and motor noise.
 We choose to use this approach mainly because it only requires a single pass through the data, meaning that each view is experienced just once and then discarded.
 While the parsimony of encoding and recall makes this algorithm suitable for use on a small autonomous robot, it had not previously been tested in the real world.
-Here, we show that the robot shown in Figure~\ref{fig:robot} can navigate fully autonomously outdoors using only a single layer neural network, with all processing performed on-board the robot using a Jetson TX1~\citep{NVIDIACorporation2016}.
+Here, we demonstrate that the robot shown in Figure~\ref{fig:robot} can navigate fully autonomously outdoors using only a single layer neural network, with all processing performed on-board the robot using a Jetson TX1~\citep{NVIDIACorporation2016}.
 %In particular we investigate whether the compact encoding loses useful information and show that instead, it can geenralis
 
 \begin{figure}[t]
@@ -91,9 +91,10 @@ Here, we show that the robot shown in Figure~\ref{fig:robot} can navigate fully 
 \section{Methods}
 As described above, at the heart of our algorithm an agent navigates by sampling views from the current position at a number of headings and finding the direction that is deemed most familiar by comparison to the views perceived during a training route. 
 We find this most familiar direction in two ways. 
-Firstly, we train a neural network to output the familiarity of the training views and input rotated versions of the current view to it. 
-This results in a rotational familiarity function (RFF -- Figure~\ref{fig:good_ridf}) which, for each heading faced, gives a familiarity score.
-The heading with the highest score is the most familiar and sets the movement direction taken.
+%Firstly, we train a neural network to output the familiarity of the training views and input rotated versions of the current view to it. 
+Firstly, we train a neuron network to output a `decision function' in response to rotated versions of the current view based on their familiarity to training views.
+This results in a rotational familiarity function (RFF -- Figure~\ref{fig:good_ridf}) which, for each heading faced, gives a decision function value.
+The heading with the lowest decision function value is the most familiar and sets the movement direction taken.
 Secondly, as a baseline and because it allows easier interpretation of the data (for instance, to identify points in routes that are easy/hard or contain misleading information) we also implement what we previously termed the Perfect Memory model. 
 In this variant, the rotated current views are compared directly in a pixel-wise manner to every training view in turn (which would not be plausible for an ant). 
 In the following sections we first describe the Perfect Memory algorithm before describing the ANN and Infomax learning rule.
@@ -126,7 +127,7 @@ The best matching heading is then defined as the one with the lowest image diffe
 Image difference can be calculated by various functions but here we use the average absolute difference between each of the image pixels to calculate the Image Difference Function~(IDF)~\citep{Zeil2003}:
 %
 \begin{align}
-    IDF\Bigl(C(\vec{a}, \theta), S(\vec{b}, \phi)\Bigr) = \frac{1}{p \times q} \sum\limits_{i=1}^p{\sum\limits_{j=1}^q|{C_{i,j} - S_{i,j}|}}
+    IDF(C(\vec{a}, \theta), S(\vec{b}, \phi)) = \frac{1}{p \times q} \sum\limits_{i=1}^p{\sum\limits_{j=1}^q|{C_{i,j} - S_{i,j}|}}
 \end{align}
 %
 where $C(\vec{a}, \theta)$ is a $p \times q$ pixel view captured at location $\vec{a}$ with heading $\theta$; $S(\vec{b}, \phi)$ is a $p \times q$ pixel snapshot stored in memory; and $C_{i,j}$ and $S_{i,j}$ refers to the intensity of pixels in row $i$ and column $j$ of the captured view and stored snapshot respectively.
@@ -182,11 +183,11 @@ where $\eta$ is the learning rate and is set as \num{0.01} for this paper.
 Finally, the response of the network to the presentation of an unseen N-dimensional input $\vec{x}$ is computed as
 %
 \begin{align}
-    \text{fam}(\vec{x})=\sum\limits_{i=1}^N |h_{i}|     \label{eqn:infomax_response}
+    d(C(\vec{a}, \theta)) = d(\vec{x}) = \sum\limits_{i=1}^N |h_{i}|     \label{eqn:infomax_response}
 \end{align}
 %
 where $|\cdot|$ denotes the absolute value.
-By applying $C(\vec{a}, \theta)$ to the ANN for a range of $\theta$, an RFF can be calculated from $\text{fam}(\vec{x})$.
+By applying $C(\vec{a}, \theta)$ to the ANN for a range of $\theta$, an RFF can be calculated from $d(\vec{x})$ and hence the most familiar direction can be found.
 
 \subsection{Robot platform}
 \label{sec:robot_platform}
