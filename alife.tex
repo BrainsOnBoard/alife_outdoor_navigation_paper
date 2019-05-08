@@ -159,7 +159,7 @@ The number of novelty units is arbitrary and here we use the same number of nove
 %We found that using as few as \num{200} novelty units can work well in many instances, but we do not explore this aspect of the problem as we were more interested in the behavioural consequences of a familiarity driven approach. 
 The network is fully connected by feedforward connections $w_{ij}$. 
 Weights are initialised randomly from a uniform distribution in the range $[-0.5,0.5]$ and then normalised so that the mean of the weights feeding into each novelty unit is \num{0} and the standard deviation is \num{1}. 
-The network is then trained using the Infomax principle~\citep{Bell1995}, adjusting the weights so as to maximise the information that the novelty units provide about the input, by following the gradient of the mutual information using Equation~\ref{eqn:infomax_learning} which performs gradient ascent using the natural gradient~\citep{Amari1998} of the mutual information over the weights~\citep{Lee1997}
+The network is then trained using the Infomax principle~\citep{Bell1995}, adjusting the weights so as to maximise the information that the novelty units provide about the input, by following the gradient of the mutual information using Equation~\ref{eqn:infomax_learning} which performs gradient ascent using the natural gradient~\citep{Amari1998} of the mutual information over the weights~\citep{Lee1997}.
 During learning the activation of each of the $M$ novelty units $h_{i}$ is computed as:
 %
 \begin{align}
