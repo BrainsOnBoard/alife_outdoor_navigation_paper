@@ -193,7 +193,7 @@ By applying $C(\vec{a}, \theta)$ to the ANN for a range of $\theta$, an RFF can 
 \label{sec:robot_platform}
 In this work we use the robot platform developed by \citet{Domcsek2018} shown in Figure~\ref{fig:robot}.
 This robot is based on a Parallax `Shield-Bot' chassis~\citep{ParallaxInc}, with a Jetson TX1 embedded computer~\citep{NVIDIACorporation2016} mounted on top for additional onboard computation and additional batteries mounted underneath. 
-The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera~\citep{JKImagingLtd}, mounted on top of the robot connected which provides panoramic visual input.
+The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera~\citep{JKImagingLtd} mounted on top of the robot which provides panoramic visual input.
 
 \subsection{Image processing and data collection}
 \label{sec:image_database}
@@ -269,7 +269,7 @@ We therefore simulated the effect of this modified algorithm using our database 
 Each point in the database is then assigned a `current' heading which is equal to the direction of the nearest segment.
 Using these headings, we can then ignore matches that would involve heading more than \SI{\pm 90}{\degree} away from the direction of the nearest section of the route and Figure~\ref{fig:vector_fields}c shows that this step solves the aliasing problems in this particular case.
 In order to quantify the performance of our algorithms, we used the absolute difference between the most familiar heading angle obtained at each location on the grid and the direction of the nearest route segment as an error measure.
-The distributions of these errors across all of the routes, algorithms and image pre-processesing steps is plotted in Figure~\ref{fig:route_benchmark} and shows that, in fact, only scanning \SI{\pm 90}{\degree} improves performance in all cases.
+The distributions of these errors across all of the routes, algorithms and image pre-processesing steps is plotted in Figure~\ref{fig:route_benchmark} and shows that, in fact, only scanning \SI{\pm 90}{\degree} improves performance in the majority of cases.
 Furthermore, Figure~\ref{fig:route_benchmark} also shows that, when using the Perfect Memory algorithm, sky-segmentation improves performance for almost all routes.
 This is particularly noticeable on route 3 (a straight line) where, when using sky-segmented input images, all of the algorithms reconstruct the direction of the route with a very small median error of around \SI{4}{\degree} but, when using unprocessed input images, this increases to around \SI{40}{\degree}.
 Figure~\ref{fig:light_level}a shows that, unlike the situation explored earlier in this section, this is not an aliasing problem as there is only a single minimum present in each RIDF.
