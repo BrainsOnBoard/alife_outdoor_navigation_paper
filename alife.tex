@@ -334,7 +334,7 @@ Furthermore, these improvements are seen even if the segmentation is performed a
 Interestingly, these improvements are not noticeable in the results collected using the autonomous robot.
 We believe that this is due to the fact that we performed these experiments in a more enclosed environment, where the sky covered a smaller portion of each image and because the testing and training both occurred at the same time of day.
 These two factors both act to reduce the differences between the raw images meaning that raw image comparisons are successful.
-Additionally, we show that the computation and storage needed to recapitulate a route using the Infomax ANN does not scale with the number of images used in training.
+Additionally, we show that the computation and storage needed to recapitulate a route using the Infomax ANN does not increase with the number of training views.
 To put this into the context of robotic control algorithms, this is not typically a property of SLAM based localization systems where more keyframes are accumulated over time although there has been recent work to cap~\citep{Maddern2012} or at least cull~\citep{Mur-Artal2015} the number of keyframes accumulated.
 %While  to the quantity of features features~\citep{Mur-Artal2015}.
 %This is not typically a property of SLAM based localization systems where more keyframes are accumulated over time
