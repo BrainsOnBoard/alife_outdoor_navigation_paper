@@ -276,7 +276,7 @@ Figure~\ref{fig:light_level}a shows that, unlike the situation explored earlier 
 However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minimum is located at the incorrect location.
 The difference images shown in Figures~\ref{fig:light_level}b~and~\ref{fig:light_level}c suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
-After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the Infomax ANN results in a lower median error than the Perfect Memory control algorithm in 3 of the 6 routes although this difference is not statistically significant.
+After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the Infomax ANN results in a lower median error than the Perfect Memory control algorithm in 3 of the 6 routes although this difference is not statistically significant ($p=0.84$, paired, two-sided Wilcoxon signed rank test, $n=6$).
 Furthermore, if we compare Figures~\ref{fig:vector_fields}c~and~\ref{fig:vector_fields}d, the vector field plotted using the Infomax ANN appears much smoother, suggesting that rather than losing useful information, the Infomax encoding may actually be beneficial for smoothing out overly tortuous training routes.
 
 \begin{figure}[t]
