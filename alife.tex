@@ -333,20 +333,21 @@ We confirmed this by calculating the shortest distance to the training path at e
 \section{Summary and Discussion}
 In this paper we present the first familiarity-based navigation algorithm that can function effectively in the real world on board a small mobile robot using an ANN-based route encoding. 
 Indeed, we show that in some cases, using an ANN can improve performance as it imposes a level of generalisation meaning that particularly tortuous elements of the training route (which we presume to be from a noisy training process) are smoothed out in the recapitulated trajectories.
+While our formulation of the Infomax learning rule is non-local and therefore not biologically plausible, we have shown the potential for biomimetic algorithms to efficiently control small, fully autonomous robots. 
+Additionally, Infomax implements a form of decorrelation between inputs and outputs, a process which has been widely reported in the brain\todo{REF}.
+Furthermore, local variants of Infomax have been demonstrated within recurrent spiking neural networks~\citep{Hayakawa2014} and future work will explore the use of such biologically realistic implementations for navigation.
 
 In addition, we reinforce results showing that removing the sky and using only a binary image make these algorithms more robust to variability in lighting and weather conditions~\citep{Philippides2011,Stone2014}. 
 Furthermore, these improvements are seen even if the segmentation is performed automatically on board the robot using an RGB image, processed using a simple watershed algorithm rather than requiring specialist sensors such as a UV camera.
 Interestingly, these improvements are not noticeable in the results collected using the autonomous robot.
 We believe that this is due to the fact that we performed these experiments in a more enclosed environment, where the sky covered a smaller portion of each image and because the testing and training both occurred at the same time of day.
 These two factors both act to reduce the differences between the raw images meaning that raw image comparisons are successful.
-Additionally, we show that the computation and storage needed to recapitulate a route using the Infomax ANN does not increase with the number of training views.
-To put this into the context of robotic control algorithms, this is not typically a property of SLAM based localization systems where more keyframes are accumulated over time although there has been recent work to cap~\citep{Maddern2012} or at least cull~\citep{Mur-Artal2015} the number of keyframes accumulated.
-%While  to the quantity of features features~\citep{Mur-Artal2015}.
-%This is not typically a property of SLAM based localization systems where more keyframes are accumulated over time
 
+Finally, we show that the computation and storage needed to recapitulate a route using the Infomax ANN does not increase with the number of training views.
+To put this into the context of robotic control algorithms, this is not typically a property of SLAM based localization systems where more keyframes are accumulated over time although there has been recent work to cap~\citep{Maddern2012} or at least cull~\citep{Mur-Artal2015} the number of keyframes accumulated.
 While visual SLAM implementations based around SURF or SIFT can take several hundred milliseconds to extract features from each frame~\citep{Bay2006}, recent SLAM implementations such as FLaME~\citep{Greene2017} have been demonstrated running on autonomous quadrotors at much higher framerates than our current Infomax implementation can achieve on the Jetson TX1.
 However, not only was FLaME implemented on an Intel CPU which \citet{Biddulph2018} found to be $5\times$ faster than a Jetson TX1, but the performance of our Infomax algorithm could be significantly improved.
-View-based algorithms in general seem to work well with low-resolution wide-field views~\citep{Wystrach2016} and this matches the observation that high-resolution vision in ants is associated with hunting not with long distance navigation~\citep{Wystrach2016}.
+View-based algorithms in general seem to work well with low-resolution wide-field views~\citep{Wystrach2016} and this matches the observation that high-resolution vision in ants is associated with hunting not with long distance navigation.
 Therefore, while $120 \times 25$ pixel images were used throughout the work presented in this paper, \citet{Baddeley2012} first demonstrated Infomax for visual navigation using input images with around half this number of pixels ($90\times 17$).
 Because Equation~\ref{eqn:infomax_response} can be implemented as a matrix-vector product, the computational complexity of which scales quadratically with $N$, using input images with half the number of pixels would quarter the time taken to evaluate Equation~\ref{eqn:infomax_response}. 
 Furthermore, while our Infomax implementation uses OpenMP~\citep{Dagum1998} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1. 
