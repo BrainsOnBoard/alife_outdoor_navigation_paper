@@ -84,8 +84,14 @@ Here, we demonstrate that the robot shown in Figure~\ref{fig:robot} can navigate
 
 \begin{figure}[t]
     \centering
-    \includegraphics[height=2in]{figures/robot.jpg}
-    \caption{Robot platform with onboard computation.}￼
+    \begin{subfigure}[b]{0.35\columnwidth}
+        \includegraphics[height=1.5in]{figures/robot.jpg}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.63\columnwidth}
+        \includegraphics[height=1.5in]{figures/robot_environment.jpg}
+    \end{subfigure}
+    \caption{\textbf{A}~Robot platform with onboard computation.
+    \textbf{B}~Environment used for robot testing.}￼
     \label{fig:robot}
 \end{figure}
 
@@ -194,7 +200,7 @@ By applying $C(\vec{a}, \theta)$ to the ANN for a range of $\theta$, an RFF can 
 
 \subsection{Robot platform}
 \label{sec:robot_platform}
-In this work we use the robot platform developed by \citet{Domcsek2018} shown in Figure~\ref{fig:robot}.
+In this work we use the robot platform developed by \citet{Domcsek2018} shown in Figure~\ref{fig:robot}a.
 This robot is based on a Parallax `Shield-Bot' chassis~\citep{ParallaxInc}, with a Jetson TX1 embedded computer~\citep{NVIDIACorporation2016} mounted on top for additional onboard computation and additional batteries mounted underneath. 
 The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera~\citep{JKImagingLtd} mounted on top of the robot which provides panoramic visual input.
 
@@ -302,13 +308,6 @@ Clearly, for small numbers of stored images, extracting heading information usin
 
 \begin{figure}[t]
     \centering
-    \includegraphics[height=2in]{figures/robot_environment.jpg}
-    \caption{Environment used for robot testing.}
-    \label{fig:robot_environment}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
     \includegraphics{figures/robot_paths.eps}
     \caption{Reconstructed paths of autonomous robot during training and testing using each algorithm.}
     \label{fig:robot_paths}
@@ -324,7 +323,7 @@ Using the implementations of Infomax and the Perfect Memory algorithms from our 
     \item Find the orientation with the highest familiarity and, if it is within \SI{4}{\degree}, start driving forwards. Otherwise, start turning in the correct direction to align with the image.
 \end{enumerate}
 %
-In order to compare the performance of the navigation algorithms and image processing steps described in Sections~\ref{sec:ridf_perfect_memory},~\ref{sec:familiarity_infomax}~and~\ref{sec:image_database} running on the robot, we first manually drove the robot along a sinuous route through the wooded area shown in Figure~\ref{fig:robot_environment}, recording training images every \SI{100}{\milli\second}.
+In order to compare the performance of the navigation algorithms and image processing steps described in Sections~\ref{sec:ridf_perfect_memory},~\ref{sec:familiarity_infomax}~and~\ref{sec:image_database} running on the robot, we first manually drove the robot along a sinuous route through the wooded area shown in Figure~\ref{fig:robot}b, recording training images every \SI{100}{\milli\second}.
 We then trained each of the navigation algorithms on the resultant dataset of \num{455} images and allowed the robot to recapitulate the path using the procedure described above.
 Throughout this training and testing process, we used the method described in Section~\ref{sec:image_database} to track the robot, resulting in the data shown in Figure~\ref{fig:robot_paths}.
 The robot was able to successfully recapitulate the training path using each of the navigation and image processing algorithms with little difference in performance immediately apparent in Figure~\ref{fig:robot_paths}.
