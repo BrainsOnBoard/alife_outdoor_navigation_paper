@@ -208,6 +208,7 @@ To achieve this in real-time on the robot, we used the watershed segmentation al
 Figure~\ref{fig:database_images} shows some example images from this database.
 
 \begin{figure}[t]
+    \centering
     \begin{subfigure}[b]{\columnwidth}
         \includegraphics[width=\columnwidth]{figures/alias_ridf.eps}
     \end{subfigure}
@@ -246,7 +247,13 @@ Figure~\ref{fig:database_images} shows some example images from this database.
 
 \begin{figure*}[t]
     \centering
-    \includegraphics{figures/route_benchmark.eps}
+    \begin{subfigure}[b]{1.6in}
+        \includegraphics[height=2.5in]{figures/routes.eps}
+    \end{subfigure}
+    \begin{subfigure}[b]{5.36in}
+        \includegraphics[height=2.5in]{figures/route_benchmark.eps}
+    \end{subfigure}
+    
     \caption{Performance of different algorithms on each of the 6 routes.
     `Boxes' indicates the three quartile values of each error distribution, `whiskers' indicate error values which lie within \num{1.5} IQRs of the upper and lower quartiles and values outside of this range are marked as outliers.}
     \label{fig:route_benchmark}
