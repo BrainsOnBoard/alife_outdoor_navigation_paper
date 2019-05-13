@@ -53,9 +53,9 @@ for r in sorted(glob("benchmark_results/output_*.csv")):
         data = np.hstack((data, frame))
 
 
-fig, axis = plt.subplots(figsize=(plot_utils.double_column_width - (plot_utils.column_width * 0.5), 2.5),
+fig, axis = plt.subplots(figsize=(plot_utils.double_column_width, 2.5),
                          frameon=False)
-axis.set_ylabel("Absolute angular error [$^\circ$]")
+axis.set_ylabel("Absolute angular error\n[degrees]")
 
 sns.boxplot(x=data["route_name"], y=data["error"], hue=data["variant"],
             ax=axis, saturation=1.0, linewidth=1.0)
@@ -67,10 +67,10 @@ axis.get_legend().remove()
 sns.despine(ax=axis)
 
 # Add in figure legend
-fig.legend(loc="lower center", ncol=4, frameon=False, columnspacing=0.4, fontsize="small")
+fig.legend(loc="lower center", ncol=4, frameon=False)
 
 # Set tight layout and save
-fig.tight_layout(pad=0, rect=[0.0, 0.22, 1.0, 1.0])
+fig.tight_layout(pad=0, rect=[0.0, 0.2, 1.0, 1.0])
 
 if not plot_utils.presentation:
     fig.savefig("../figures/route_benchmark.eps")
