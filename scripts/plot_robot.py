@@ -36,12 +36,6 @@ def get_snapshot_positions(tracking, snapshots):
     positions = interpolator(snapshots["t"])
     return positions
 
-def plot_error_lines(axis, testing_snapshots, training_positions, testing_positions):
-    for i, s in enumerate(testing_snapshots["best_snapshot"]):
-        axis.arrow(testing_positions[0, i], testing_positions[1, i],
-                   training_positions[0, s] - testing_positions[0, i], training_positions[1, s] - testing_positions[1, i],
-                   color="gray", linewidth=0.1, head_width=10.0, length_includes_head=True)
-
 def calc_distance_apart(training_tree, testing):
     testing_points = np.transpose(np.vstack((testing["x"], testing["y"])))
 
@@ -93,7 +87,7 @@ fig.tight_layout(pad=0, rect=[0.0, 0.5, 1.0, 1.0])
 
 if not plot_utils.presentation:
     fig.savefig("../figures/robot_paths.eps")
-'''
+
 training_tree = KDTree(np.transpose(np.vstack((training["x"], training["y"]))))
 distances = [calc_distance_apart(training_tree, testing_raw),
              calc_distance_apart(training_tree, testing_binary),
@@ -102,19 +96,18 @@ distances = [calc_distance_apart(training_tree, testing_raw),
 
 print("Error mean:%f, sd:%f" % (np.average(np.hstack(distances)), np.std(np.hstack(distances))))
 error_fig, error_axis = plt.subplots(figsize=(plot_utils.column_width, 4.0),frameon=False)
-error_axis.boxplot(distances)
-error_axis.set_xticklabels(labels[1:], rotation=90, horizontalalignment="right")
+
+error_axis.set_xlabel("X [cm]")
 error_axis.set_ylabel("Distance to training route [cm]")
 
+for d, n, p in zip(distances, ["P.M. raw", "P.M. binary", "Infomax", "InfoMax binary"],
+                   [testing_raw, testing_binary, testing_infomax, testing_infomax_binary]):
+    error_axis.scatter(p["y"], d, label=n, s=2)
+
+error_axis.legend()
 error_fig.tight_layout(pad=0, rect=(0, 0.025, 1, 1))
 
-if not plot_utils.presentation:
-    error_fig.savefig("../figures/robot_error.eps")
-
-#plot_error_lines(axis, testing_raw_snapshots, training_snapshot_positions, testing_raw_snapshot_positions)
-#plot_error_lines(axis, testing_horizon_vectors_snapshots, training_snapshot_positions, testing_horizon_snapshot_positions)
-'''
-
-
+#if not plot_utils.presentation:
+#    error_fig.savefig("../figures/robot_error.eps")
 
 plt.show()
