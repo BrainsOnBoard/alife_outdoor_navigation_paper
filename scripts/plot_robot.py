@@ -65,7 +65,7 @@ testing_binary = testing_binary[(testing_binary["y"] >= largest_miny) & (testing
 testing_infomax = testing_infomax[(testing_infomax["y"] >= largest_miny) & (testing_infomax["y"] <= smallest_maxy)]
 testing_infomax_binary = testing_infomax_binary[(testing_infomax_binary["y"] >= largest_miny) & (testing_infomax_binary["y"] <= smallest_maxy)]
 
-fig, axis = plt.subplots(figsize=(plot_utils.column_width, 2.25),frameon=False)
+fig, axis = plt.subplots(figsize=(plot_utils.column_width, 2.0),frameon=False)
 
 axis.set_xlim((0, 650))
 axis.set_ylim((0, 240))

@@ -37,14 +37,13 @@ J.C.Knight@sussex.ac.uk} % email of corresponding author
 
 \begin{abstract}
 % Abstract length should not exceed 250 words
-Inspired by the behaviour of ants, models of visually-guided navigation that operate by scanning for previously experienced views of the world have been shown to be capable of robust route navigation. 
-These algorithms operate by using views experienced along a training route to train an artificial neural network~(ANN) to output a measure of the familiarity of any new view.
-Hence we refer to them as familiarity-based navigation algorithms.
-As these algorithms have not yet been tested in the real world, in this paper we show that an ANN with an Infomax learning rule is capable of delivering reliable direction information along outdoor routes, even when scenes contain few local landmarks and high-levels of noise (from changing lighting conditions, uneven terrain etc) with all computation performed on a small low-power robot.
-Indeed, routes can be precisely recapitulated, with our robot straying an average of only \SI{10}{\centi\metre} from the \SI{6}{\metre} training path. 
-Additionally, we show that the required computation does not increase with the number of training views and thus the ANN provides a compact representation of the knowledge needed to traverse a route. 
-Finally, rather than this compact representation necessarily losing information, there are instances where the use of an ANN ameliorates the problems of sub-optimal paths caused by very tortuous training routes. 
-Our results therefore suggest the feasibility of familiarity-based navigation for long-range autonomous visual homing.
+Insect-Inspired models of visual navigation, that operate by scanning for familiar views of the world, have been shown to be capable of robust route navigation in simulation. 
+These familiarity-based navigation algorithms operate by training an artificial neural network (ANN) with views from a training route, so that it can then output a familiarity score for any new view.
+In this paper we show that such an algorithm, with all computation performed on a small low-power robot, is capable of delivering reliable direction information along real-world outdoor routes, even when scenes contain few local landmarks and have high-levels of noise (from variable lighting and terrain).
+Indeed, routes can be precisely recapitulated and we show that the required computation does not increase with the number of training views.
+Thus the ANN provides a compact representation of the knowledge needed to traverse a route.
+In fact, rather than the compact representation losing information, there are instances where the use of an ANN ameliorates the problems of sub optimal paths caused by tortuous training routes.
+Our results suggest the feasibility of familiarity-based navigation for long-range autonomous visual homing.
 \end{abstract}
 
 \section{Introduction}
@@ -357,7 +356,7 @@ Thus, as with SLAM which has seen vast increases in performance efficiency, furt
 \section{Acknowledgements}
 This work was funded by the EPSRC (Brains on Board project, grant number EP/P006094/1).
 
-\scriptsize
+\small
 \bibliographystyle{apalike}
 \bibliography{alife} % replace by the name of your .bib file
 
