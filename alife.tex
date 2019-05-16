@@ -48,36 +48,36 @@ Our results suggest the feasibility of familiarity-based navigation for long-ran
 
 \section{Introduction}
 Visual homing -- the ability to navigate back to a place of interest using visual information alone -- is a problem of great interest for both engineers seeking to build autonomous robots and neuroethologists seeking to understand its neural basis in animals~\citep{Graham2014}.
-In the animal kingdom, solitary foraging ants are one of the champion visual navigators~\citep{Wehner2009}.
+Solitary foraging ants are amongst the champion visual navigators in the animal kingdom~\citep{Wehner2009}.
 Despite having small brains and low resolution vision, these ants can learn visually guided routes many metres long through complex terrain~\citep{Knaden2016}.
-However, in direct contrast with most modern robotic methods, to navigate between two locations, insects use route knowledge not mental maps~\citep{Wehner2006}. 
+However, in direct contrast with most modern robotic methods,  insects use route knowledge not mental maps to navigate between two locations~\citep{Wehner2006}. 
 That is, insects learn procedural instructions for navigation: ``What should I do here?'' rather than ``Where am I?''. 
 This allows for simpler representations of the visual world with corresponding potential for computational efficiencies.
 We have shown that route knowledge can be learnt and represented holistically using an artificial neural network (ANN)~\citep{Philippides2015}, without specifying when or what to learn~\citep{Baddeley2011} and from a single exposure to the route data~\citep{Baddeley2012}. 
 One of the reasons to use an ANN is that route knowledge can be encoded and used with memory and computational constraints that do not scale with route length, are plausible for an ant and, as a corollary, well-suited to a small, power-efficient, robot.
-While our ANN-based algorithms have been tested in simulations of ant habitats, they have not yet been tested in the real world.  
-In this paper, we therefore show that a single layer ANN can autonomously guide a robot through outdoor routes of up to \SI{10}{\metre} with all computation performed on-board.
+While our ANN-based algorithms have been tested in simulations of ant habitats, they had not previously been tested in the real world.
+In this paper, we show that a single layer ANN can autonomously guide a robot through outdoor routes of up to \SI{10}{\metre} with all computation performed on-board.
 %While these algorithms have been extensively tested in simulations of complex ant habitats, there has been no previous investigation into how an ANN-based route encoding would function in the real world. 
 %In this paper we explore the performance of our familiarity-based algorithm -- in which routes are encoded in a single layer network trained with an (unsupervised) Infomax training rule -- running on-board an autonomous robot and recapitulating routes of up to \SI{10}{\metre}. 
 
 Our route navigation algorithms start with two observations. 
-Firstly, if an agent stores a view when facing a given direction, the difference between it and views from a nearby location, but at a range of headings, will be minimised when the agent is facing the same direction as when the first image was stored~\citep{Zeil2003}. 
+Firstly, if an agent stores a view when facing a given direction, the difference between this view and views from nearby locations will be minimised when the agent is facing the same direction as when the original view was stored~\citep{Zeil2003}. 
 Secondly, for ants and many wheeled robots, there is a fixed relationship between viewing direction and direction of travel, meaning that a view implicitly defines a movement direction.
 Therefore, when an agent is facing in a familiar direction, it is likely travelling in the correct direction. 
 This allows the problem of navigation to be reframed in terms of a search for familiar views, that is, views that are associated with a previously learned route.
 Based on this, we have developed a parsimonious insect-inspired navigation algorithm in which a route, or routes, are learnt holistically and route recapitulation is driven by a search for familiar views~\citep{Baddeley2012}.
 
 The algorithm proceeds as follows: an agent equipped with a low-resolution \SI{360}{\degree} panoramic visual sensor first travels a route.
-The views it experiences along this route -- crucially determined by both the agent’s positions and headings (poses) -- are used to sequentially train an artificial neural network~(ANN) which learns a holistic representation of the views encountered. Subsequently, the network is used to estimate the likelihood of whether a given view -- and thus a pose -- has been experienced before.
+The views it experiences along this route -- crucially determined by both the agent's positions and headings (poses) -- are used to sequentially train an artificial neural network~(ANN) which learns a holistic representation of the views encountered. Subsequently, the network is used to estimate the likelihood of whether a given view -- and thus a pose -- has been experienced before.
 When trying to repeat the route, the agent derives a direction of movement at a position by visually scanning the environment (either by physically rotating -- a behaviour seen in ants~\citep{Wystrach2014} -- or rotating the view `in silico').
 Each rotated version of the current view is applied as an input to the network which outputs an estimate of its familiarity.
 The agent then moves in the direction corresponding to the view most similar to those encountered during learning.
 
-Algorithms of this sort have been used to successfully learn routes through simulations of the habitats of solitary foraging ants, using a variety of neural networks as the route encoding, ranging from restricted Boltzmann machines~\citep{Baddeley2011models} to a spiking model of part of an ant’s brain known as the mushroom body~\citep{Ardin2016}.
-The paths of these simulated agents have then been shown to demonstrate many of the characteristics of the paths of ants~\citep{Wystrach2013}.
-Here, we follow \citet{Baddeley2012} who showed that a single layer network trained with an Infomax learning rule can not only navigate robustly, but can learn multiple paths to a single goal in a single trial with performance robust to sensor and motor noise.
+Algorithms of this sort have been used to successfully learn routes through simulations of the habitats of solitary foraging ants, using a variety of neural networks for route encoding, ranging from restricted Boltzmann machines~\citep{Baddeley2011models} to a spiking model of a part of an ant's brain known as the mushroom body~\citep{Ardin2016}.
+The paths of these simulated agents were found to have many of the characteristics of the paths of ants~\citep{Wystrach2013}.
+Here, we follow \citet{Baddeley2012} who showed that a single layer network trained with an Infomax learning rule~\citep{Bell1995} can not only navigate robustly, but can learn multiple paths to a single goal with a single training run per path and with performance robust to sensor and motor noise.
 We choose to use this approach mainly because it only requires a single pass through the data, meaning that each view is experienced just once and then discarded.
-While the parsimony of encoding and recall makes this algorithm suitable for use on a small autonomous robot, it had not previously been tested in the real world.
+While this algorithm suitable is well-suited for use on autonomous robots, it had not previously been tested in the real world.
 Here, we demonstrate that the robot shown in Figure~\ref{fig:robot} can navigate fully autonomously outdoors using only a single layer neural network, with all processing performed on-board the robot using a Jetson TX1~\citep{NVIDIACorporation2016}.
 %In particular we investigate whether the compact encoding loses useful information and show that instead, it can geenralis
 
@@ -98,7 +98,7 @@ Here, we demonstrate that the robot shown in Figure~\ref{fig:robot} can navigate
 As described above, at the heart of our algorithm an agent navigates by sampling views from the current position at a number of headings and finding the direction that is deemed most familiar by comparison to the views perceived during a training route. 
 We find this most familiar direction in two ways. 
 %Firstly, we train a neural network to output the familiarity of the training views and input rotated versions of the current view to it. 
-Firstly, we train a neuron network to output a `decision function' in response to rotated versions of the current view based on their familiarity to training views.
+Firstly, we train a neural network to output a `decision function' in response to rotated versions of the current view based on their familiarity to training views.
 This results in a rotational familiarity function (RFF -- Figure~\ref{fig:good_ridf}) which, for each heading faced, gives a decision function value.
 The heading with the lowest decision function value is the most familiar and sets the movement direction taken.
 Secondly, as a baseline and because it allows easier interpretation of the data (for instance, to identify points in routes that are easy/hard or contain misleading information) we also implement what we previously termed the Perfect Memory model. 
@@ -140,7 +140,7 @@ where $C(\vec{a}, \theta)$ is a $p \times q$ pixel view captured at location $\v
 A Rotational Image Difference Function~(RIDF) is thus generated by varying theta through a range of angles and calculating the IDF at each rotation. 
 Where there is a good match, there will be a minimum in the RIDF which defines the best matching direction. 
 An example RIDF is shown in Figure~\ref{fig:good_ridf} which has a clear minimum at the best matching heading of around \SI{60}{\degree}.
-As the RIDF will also have minima at other matching headings, we can use this to, for example, analyse locations where there has been a bad match to see whether it is the result of visual aliasing.
+As the RIDF will also have local minima at other headings, we can use the RIDF to, for example, analyse whether errors in navigation were the result of visual aliasing.
 
 \begin{figure*}[t]
     \centering
@@ -160,14 +160,14 @@ As the RIDF will also have minima at other matching headings, we can use this to
 
 \subsection{Familiarity-based route navigation}
 \label{sec:familiarity_infomax}
-To perform familiarity discrimination we follow \citet{Baddeley2012} and use a neural network model that was specifically designed to perform this task~\citep{Lulham2011}. 
-The architecture consists of an input layer and a novelty layer with $tanh()$ activation functions. 
+To estimate view familiarity we follow \citet{Baddeley2012} and use a neural network model that was specifically designed to perform this task~\citep{Lulham2011}. 
+The network consists of an input layer and a novelty layer with $tanh()$ activation functions. 
 The number of input units is equal to the dimensionality of the input which in our case is $[120 \times 25]=3000$, the number of pixels in a down-sampled view of the world. 
 The number of novelty units is arbitrary and here we use the same number of novelty units as inputs although, using fewer novelty units has worked in simulation and will be tested in future work.
 %We found that using as few as \num{200} novelty units can work well in many instances, but we do not explore this aspect of the problem as we were more interested in the behavioural consequences of a familiarity driven approach. 
 The network is fully connected by feedforward connections $w_{ij}$. 
 Weights are initialised randomly from a uniform distribution in the range $[-0.5,0.5]$ and then normalised so that the mean of the weights feeding into each novelty unit is \num{0} and the standard deviation is \num{1}. 
-The network is then trained using the Infomax principle~\citep{Bell1995}, adjusting the weights so as to maximise the information that the novelty units provide about the input, by following the gradient of the mutual information using Equation~\ref{eqn:infomax_learning} which performs gradient ascent using the natural gradient~\citep{Amari1998} of the mutual information over the weights~\citep{Lee1997}.
+The network is then trained using the Infomax learning rule~\citep{Bell1995}, adjusting the weights so as to maximise the information that the novelty units provide about the input, by following the gradient of the mutual information using Equation~\ref{eqn:infomax_learning} which performs gradient ascent using the natural gradient~\citep{Amari1998} of the mutual information over the weights~\citep{Lee1997}.
 During learning the activation of each of the $M$ novelty units $h_{i}$ is computed as:
 %
 \begin{align}
@@ -175,23 +175,23 @@ During learning the activation of each of the $M$ novelty units $h_{i}$ is compu
 \end{align}
 %
 where $x_{j}$ is a row vector assembled by concatenating the rows of $C(\vec{a}, \theta)$ and $N=p \times q$~(the number of input units).
-The output $y_{i}$ of the novelty units is then given by:
+The output $y_{i}$ of the novelty units is then:
 %
 \begin{align}
     y_{i}=tanh(h_{i})   \label{eqn:infomax_output}
 \end{align}
 %
-The weights are then adjusted using: 
+and the weights are adjusted using: 
 %
 \begin{align}
     \Delta w_{ij}=\frac{\eta}{N} \Bigl( w_{ij} - (y_{i} + h_{i}) \sum\limits_{k=1}^N h_{k}w_{kj} \Bigr)   \label{eqn:infomax_learning}
 \end{align}
 %
-where $\eta$ is the learning rate which is set as \num{0.01} for this paper after \citet{Baddeley2012}. 
+where $\eta$ is the learning rate which is set as \num{0.01} for this paper following \citet{Baddeley2012}. 
 Finally, the response of the network to the presentation of an unseen N-dimensional input $\vec{x}$ is computed as
 %
 \begin{align}
-    d(C(\vec{a}, \theta)) = d(\vec{x}) = \sum\limits_{i=1}^N |h_{i}|     \label{eqn:infomax_response}
+    d(C(\vec{a}, \theta)) = d(\vec{x}) = \sum\limits_{i=1}^N |h_{i}|, \label{eqn:infomax_response}
 \end{align}
 %
 where $|\cdot|$ denotes the absolute value.
@@ -207,7 +207,7 @@ The Jetson TX1 is connected via USB to a Kodak PixPro SP360 4K camera~\citep{JKI
 \label{sec:image_database}
 Using a Kodak PixPro SP360 4K panoramic camera~\citep{JKImagingLtd}, we recorded \num{195} images of the ‘Library Square’ at the University of Sussex. 
 These were taken on a \SI{1.2}{\metre} grid, aligned with the slabs the square is paved with.
-As well as this reference grid of images, we also recorded videos from the same camera mounted on the mobile robot described in the previous section, as we manually drove it along six routes of varying lengths and tortuosity across the square. 
+As well as this reference grid of images, we also recorded videos from the same camera mounted on the mobile robot as we manually drove it along six routes of varying lengths and tortuosity across the square. 
 We tracked the robot by using the Discriminative Correlation Filter Tracker with Channel and Spatial Reliability~\citep{Lukezic2018} implementation provided by OpenCV~\citep{OpenCV} to extract the position of the robot over time from video captured by a tripod-mounted camera. 
 Finally, we used OpenCV to apply a perspective transform to the positions extracted by the tracker and married these final positions with the video frames captured by the robot. 
 
@@ -264,14 +264,14 @@ Figure~\ref{fig:database_images} shows some example images from this database.
 \section{Results}
 \subsection{Offline simulations}
 \label{sec:offline_simulations}
-We trained both the Infomax and Perfect Memory algorithms on the images taken along the six routes shown in Figure~\ref{fig:vector_fields}a and then used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
+We trained both the Infomax and Perfect Memory algorithms on the images taken along the six routes shown in Figure~\ref{fig:vector_fields}a and used them to find the direction a robot would move when placed at each grid point within \SI{4}{\metre} of the trained route. 
 Figure~\ref{fig:vector_fields} shows some example vector fields obtained by plotting this direction at each of the chosen grid locations when using the Perfect Memory algorithm described in Section~\ref{sec:ridf_perfect_memory} with the watershed segmentation-based pre-processing discussed in Section~\ref{sec:image_database}. 
 While the vector field suggests that the route shown in Figure~\ref{fig:vector_fields}b would be recapitulated successfully, in the middle section of the route shown in Figure~\ref{fig:vector_fields}c, errors occur.
-Figure~\ref{fig:aliasing}a shows a RIDF taken at one of the problematic locations on this route (\SI{600}{\centi\metre}, \SI{720}{\centi\metre}) and it is clear that, as well as the local minima representing the correct heading at \SI{15}{\degree}, there is an additional, slightly lower global minimum at \SI{153}{\degree} which is overriding the correct choice.
-Figure~\ref{fig:aliasing} show the per-pixel differences between the best-matching and the closest images (in terms of distance to the current point) taken from training route; and the rotated versions of current image which best match these training images.
-Although the \emph{shape} of the skyline in the closest image (Figure~\ref{fig:aliasing}c) is clearly better matched than it is with the best-matching image (Figure~\ref{fig:aliasing}b), there is a vertical offset -- probably caused by variations in pitch due to uneven terrain. 
-This introduces sufficient difference between the grid image and the correct route image (Figure~\ref{fig:aliasing}c) that the Perfect Memory model matches the more distant (but still nearby) image better (possibly as the paving slab has a similar pitch to the grid point). 
-Thus the direction taken is similar to the direction taken at this point in the route which results in an error at this location (indicated with a pink arrow in Figure~\ref{fig:vector_fields}c).
+Figure~\ref{fig:aliasing}a shows a RIDF taken at one of the problematic locations on this route (\SI{600}{\centi\metre}, \SI{720}{\centi\metre}) and it is clear that, as well as the local minimum representing the correct heading at \SI{15}{\degree}, there is an additional, slightly lower global minimum at \SI{153}{\degree} which is overriding the correct choice.
+Figure~\ref{fig:aliasing} show the per-pixel differences between the best-matching and the closest images (in terms of distance to the current point) taken from the training route; and the rotated versions of the current image which best match these training images.
+Although the \emph{shape} of the skyline in the closest image (Figure~\ref{fig:aliasing}c) is clearly better matched than it is with the best-matching image (Figure~\ref{fig:aliasing}b), there is a vertical offset -- probably caused by variations in pitch due to uneven terrain.
+This introduces sufficient difference between the grid image and the correct route image (Figure~\ref{fig:aliasing}c) that the Perfect Memory model matches the more distant image better.
+Therefore, at this grid position, the algorithm selects a direction corresponding to the more distant point (indicated with a pink arrow in Figure~\ref{fig:vector_fields}c), resulting in an error.
 
 However, if we were recapitulating the route using a real robot, these false-positive matches could be eliminated and computation could be saved by simply \emph{not} scanning the full \SI{\pm 180}{\degree} but instead only scanning \SI{\pm 90}{\degree} around the robot's current heading.
 However, unlike in the live robot tests, in the database there is no current heading.
@@ -286,7 +286,7 @@ Figure~\ref{fig:light_level}a shows that, unlike the situation explored earlier 
 However, the magnitude of the average image differences between the raw images is much larger than that between the sky-segmented images and the minimum is located at the incorrect location.
 The difference images shown in Figures~\ref{fig:light_level}b~and~\ref{fig:light_level}c suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
-After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the Infomax ANN results in a lower median error than the Perfect Memory control algorithm in 3 of the 6 routes although this difference is not statistically significant ($p=0.84$, paired, two-sided Wilcoxon signed rank test, $n=6$).
+After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the Infomax ANN achieves a lower median error than the Perfect Memory control algorithm in 3 of the 6 routes although this difference is not statistically significant ($p=0.84$, paired, two-sided Wilcoxon signed rank test, $n=6$).
 Furthermore, comparing Figures~\ref{fig:vector_fields}d~and~\ref{fig:vector_fields}e, the vector field derived from the Infomax ANN is smoother, suggesting that rather than losing useful information, the Infomax encoding may actually be beneficial for smoothing out tortuous training routes.
 
 \begin{figure}[t]
@@ -300,8 +300,8 @@ Furthermore, comparing Figures~\ref{fig:vector_fields}d~and~\ref{fig:vector_fiel
 
 \subsection{Computational cost of algorithm}
 In the previous section, we showed that the algorithms described in Sections~\ref{sec:ridf_perfect_memory}~and~\ref{sec:familiarity_infomax} are capable of robustly extracting heading direction in outdoor scenes. 
-However, in order to deploy these algorithms on a real robot with constrained on board processing, their performance is important. 
-In order to measure performance in a controlled scenario, we wrote a benchmarking application in C++ which runs on the Jetson TX1 and trains either the Perfect Memory or the Infomax algorithm with varying numbers of images and then measures how long it takes to extract a heading from a testing image (averaged over \num{100} iterations) using \lstinline{std::chrono::high_resolution_clock}.
+However, in order to deploy these algorithms on a real robot with constrained on board processing, their computational cost is important. 
+In order to measure computational cost in a controlled scenario, we wrote a benchmarking application in C++ which runs on the Jetson TX1 and trains either the Perfect Memory or the Infomax algorithm with varying numbers of images and then measures how long it takes to extract a heading from a testing image (averaged over \num{100} iterations) using \lstinline{std::chrono::high_resolution_clock}.
 Figure~\ref{fig:jetson_test_performance} shows the performance of our implementation of the Infomax algorithm compared to the Perfect Memory control using $120 \times 25$ pixel input images.
 Clearly, for small numbers of stored images, extracting heading information using the Perfect Memory is faster but, assuming that training images are sampled every \SI{100}{\milli\second}, Infomax begins to be more efficient for routes with only a little over \SI{1}{\minute} of training data making it much more feasible approach for long-range visual homing.
 
@@ -347,11 +347,11 @@ While visual SLAM implementations based around SURF or SIFT can take several hun
 However, not only was FLaME implemented on an Intel CPU which \citet{Biddulph2018} found to be $5\times$ faster than a Jetson TX1, but the performance of our Infomax algorithm could be significantly improved.
 View-based algorithms in general seem to work well with low-resolution wide-field views~\citep{Wystrach2016} and this matches the observation that high-resolution vision in ants is associated with hunting not with long distance navigation.
 Therefore, while $120 \times 25$ pixel images were used throughout the work presented in this paper, \citet{Baddeley2012} first demonstrated Infomax for visual navigation using input images with around half this number of pixels ($90\times 17$).
-Because Equation~\ref{eqn:infomax_response} can be implemented as a matrix-vector product, the computational complexity of which scales quadratically with $N$, using input images with half the number of pixels would quarter the time taken to evaluate Equation~\ref{eqn:infomax_response}. 
+Because Equation~\ref{eqn:infomax_response} can be implemented as a matrix-vector product, the computational complexity of which scales quadratically with $N$, using input images with half the number of pixels would reduce the time taken to evaluate Equation~\ref{eqn:infomax_response} by \SI{75}{\percent}. 
 Furthermore, while our Infomax implementation uses OpenMP~\citep{Dagum1998} to take advantage of the the Jetson TX1's four CPU cores, it does not utilise the \num{256} core GPU present on the Jetson TX1. 
 Initial experiments using the cuBLAS~\citep{NVIDIACorporation2007} GPU-accelerated linear algebra library suggest that Equation~\ref{eqn:infomax_response} could be evaluated in around \SI{100}{\milli\second} for $120 \times 25$ pixel images -- a $5 \times$ speedup over our current implementation.
 %This paper thus demonstrates the feasibility for efficient rapid learning of visually guided routes for autonomous robots. 
-Thus, as with SLAM which has seen vast increases in performance efficiency, further work on the ANN encoding, visual processing and behavioural strategy, will extend the range of homing and reduce computation and training times still further.
+Thus, as with SLAM which has seen vast increases in performance efficiency, further work on the ANN encoding, visual processing and behavioural strategy, will extend the range of homing and reduce computation and training times further.
 
 \section{Acknowledgements}
 This work was funded by the EPSRC (Brains on Board project, grant number EP/P006094/1).
