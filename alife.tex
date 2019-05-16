@@ -52,10 +52,10 @@ In the animal kingdom, solitary foraging ants are one of the champion visual nav
 Despite having small brains and low resolution vision, these ants can learn visually guided routes many metres long through complex terrain~\citep{Knaden2016}.
 However, in direct contrast with most modern robotic methods, to navigate between two locations, insects use route knowledge not mental maps~\citep{Wehner2006}. 
 That is, insects learn procedural instructions for navigation: ``What should I do here?'' rather than ``Where am I?''. 
-This allows for much simpler mental representations of the visual world with corresponding potential for computational efficiencies.
+This allows for simpler representations of the visual world with corresponding potential for computational efficiencies.
 We have shown that route knowledge can be learnt and represented holistically using an artificial neural network (ANN)~\citep{Philippides2015}, without specifying when or what to learn~\citep{Baddeley2011} and from a single exposure to the route data~\citep{Baddeley2012}. 
 One of the reasons to use an ANN is that route knowledge can be encoded and used with memory and computational constraints that do not scale with route length, are plausible for an ant and, as a corollary, well-suited to a small, power-efficient, robot.
-While our ANN-based algorithms have been extensively tested in simulations of ant habitats, they have not yet been tested in the real world.  
+While our ANN-based algorithms have been tested in simulations of ant habitats, they have not yet been tested in the real world.  
 In this paper, we therefore show that a single layer ANN can autonomously guide a robot through outdoor routes of up to \SI{10}{\metre} with all computation performed on-board.
 %While these algorithms have been extensively tested in simulations of complex ant habitats, there has been no previous investigation into how an ANN-based route encoding would function in the real world. 
 %In this paper we explore the performance of our familiarity-based algorithm -- in which routes are encoded in a single layer network trained with an (unsupervised) Infomax training rule -- running on-board an autonomous robot and recapitulating routes of up to \SI{10}{\metre}. 
@@ -181,7 +181,7 @@ The output $y_{i}$ of the novelty units is then given by:
     y_{i}=tanh(h_{i})   \label{eqn:infomax_output}
 \end{align}
 %
-The weights are then adjusted using the following learning rule: 
+The weights are then adjusted using: 
 %
 \begin{align}
     \Delta w_{ij}=\frac{\eta}{N} \Bigl( w_{ij} - (y_{i} + h_{i}) \sum\limits_{k=1}^N h_{k}w_{kj} \Bigr)   \label{eqn:infomax_learning}
@@ -230,7 +230,7 @@ Figure~\ref{fig:database_images} shows some example images from this database.
     Using grid image taken at location marked with red arrow in Figures~\ref{fig:vector_fields}c~and~\ref{fig:vector_fields}d (\SI{600}{\centi\metre}, \SI{720}{\centi\metre}).
     All images were pre-processed using watershed segmentation algorithm.
     \textbf{A}~Rotational Image Difference function.
-    \textbf{B}~Difference image with visual aliased route image found at location marked with pink arrow in Figure~\ref{fig:vector_fields}c.
+    \textbf{B}~Difference image with visual aliased route image from location marked with pink arrow in Figure~\ref{fig:vector_fields}c.
     \textbf{C}~Difference image with correct route image found at location marked with pink arrow in Figure~\ref{fig:vector_fields}d}
     \label{fig:aliasing}
 \end{figure}
@@ -287,7 +287,7 @@ However, the magnitude of the average image differences between the raw images i
 The difference images shown in Figures~\ref{fig:light_level}b~and~\ref{fig:light_level}c suggest that the incorrect position of the minima when comparing the raw images is likely to be due to the large differences in the sky portion of the image due to clouds and the images having been recorded at a different time of day.
 
 After applying sky-segmentation to the input images and only scanning \SI{\pm 90}{\degree} away from the direction of the nearest section of the route, the Infomax ANN results in a lower median error than the Perfect Memory control algorithm in 3 of the 6 routes although this difference is not statistically significant ($p=0.84$, paired, two-sided Wilcoxon signed rank test, $n=6$).
-Furthermore, if we compare Figures~\ref{fig:vector_fields}d~and~\ref{fig:vector_fields}e, the vector field plotted using the Infomax ANN appears much smoother, suggesting that rather than losing useful information, the Infomax encoding may actually be beneficial for smoothing out overly tortuous training routes.
+Furthermore, comparing Figures~\ref{fig:vector_fields}d~and~\ref{fig:vector_fields}e, the vector field derived from the Infomax ANN is smoother, suggesting that rather than losing useful information, the Infomax encoding may actually be beneficial for smoothing out tortuous training routes.
 
 \begin{figure}[t]
     \centering
